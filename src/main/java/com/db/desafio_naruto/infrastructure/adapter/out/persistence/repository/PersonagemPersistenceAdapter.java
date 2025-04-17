@@ -2,10 +2,13 @@ package com.db.desafio_naruto.infrastructure.adapter.out.persistence.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import com.db.desafio_naruto.application.port.out.AtualizarPersonagemPort;
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
+import com.db.desafio_naruto.application.port.out.BuscarTodosPersonagensPort;
 import com.db.desafio_naruto.application.port.out.DeletarPersonagemPort;
 import com.db.desafio_naruto.application.port.out.SalvarPersonagemPort;
 import com.db.desafio_naruto.domain.model.Personagem;
@@ -17,7 +20,8 @@ public class PersonagemPersistenceAdapter implements
         SalvarPersonagemPort,
         BuscarPorIdPersonagemPort,
         DeletarPersonagemPort,
-        AtualizarPersonagemPort {
+        AtualizarPersonagemPort,
+        BuscarTodosPersonagensPort {
 
     private final PersonagemJpaRepository personagemRepository;
     private final PersonagemPersistenceMapper mapper;
@@ -33,6 +37,12 @@ public class PersonagemPersistenceAdapter implements
         PersonagemEntity entity = mapper.toEntity(personagem);
         entity = personagemRepository.save(entity);
         return mapper.toDomain(entity);
+    }
+
+    @Override
+    public Page<Personagem> buscarTodos(Pageable pageable) {
+        return personagemRepository.findAll(pageable)
+                .map(mapper::toDomain);
     }
 
     @Override
