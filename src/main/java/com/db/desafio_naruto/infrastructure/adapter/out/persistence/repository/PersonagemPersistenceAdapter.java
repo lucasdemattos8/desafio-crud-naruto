@@ -4,7 +4,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
+import com.db.desafio_naruto.application.port.out.AtualizarPersonagemPort;
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
+import com.db.desafio_naruto.application.port.out.DeletarPersonagemPort;
 import com.db.desafio_naruto.application.port.out.SalvarPersonagemPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.PersonagemEntity;
@@ -13,7 +15,9 @@ import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.Perso
 @Component
 public class PersonagemPersistenceAdapter implements 
         SalvarPersonagemPort,
-        BuscarPorIdPersonagemPort {
+        BuscarPorIdPersonagemPort,
+        DeletarPersonagemPort,
+        AtualizarPersonagemPort {
 
     private final PersonagemJpaRepository personagemRepository;
     private final PersonagemPersistenceMapper mapper;
@@ -35,5 +39,17 @@ public class PersonagemPersistenceAdapter implements
     public Optional<Personagem> buscarPorId(Long id) {
         PersonagemEntity entity = personagemRepository.findById(id).get();
         return Optional.of(mapper.toDomain(entity));
+    }
+
+    @Override
+    public Personagem atualizar(Personagem personagem) {
+        PersonagemEntity entity = mapper.toEntity(personagem);
+        entity = personagemRepository.save(entity);
+        return mapper.toDomain(entity);
+    }
+
+    @Override
+    public void deletar(Long id) {
+        personagemRepository.deleteById(id);
     }
 }
