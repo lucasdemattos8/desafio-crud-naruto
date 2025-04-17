@@ -16,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.db.desafio_naruto.application.port.in.SalvarPersonagemUseCase;
+import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
+import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
 import com.db.desafio_naruto.application.port.in.AtualizarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.BuscarTodosPersonagensUseCase;
 import com.db.desafio_naruto.application.port.in.DeletarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.ExecutarJutsuUseCase;
 import com.db.desafio_naruto.domain.model.Personagem;
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemPersistenceMapper;
 
 
 @RestController
@@ -32,33 +35,38 @@ public class PersonagemController {
     private final DeletarPersonagemUseCase deletarPersonagemUseCase;
     private final AtualizarPersonagemUseCase atualizarPersonagemUseCase;
     private final BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase;
+    private final PersonagemPersistenceMapper personagemMapper;
 
     public PersonagemController(
         SalvarPersonagemUseCase createPersonagemUseCase, ExecutarJutsuUseCase executarJutsuUseCase,
         DeletarPersonagemUseCase deletarPersonagemUseCase, AtualizarPersonagemUseCase atualizarPersonagemUseCase,
-        BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase) {
+        BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase, PersonagemPersistenceMapper personagemMapper) {
         this.createPersonagemUseCase = createPersonagemUseCase;
         this.executarJutsuUseCase = executarJutsuUseCase;
         this.deletarPersonagemUseCase = deletarPersonagemUseCase;
         this.atualizarPersonagemUseCase = atualizarPersonagemUseCase;
         this.buscarTodosPersonagensUseCase = buscarTodosPersonagensUseCase;
+        this.personagemMapper = personagemMapper;
     }
     
     @GetMapping
-    public ResponseEntity<Page<Personagem>> buscarTodos(
+    public ResponseEntity<Page<PersonagemDTO>> buscarTodos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sort) {
         
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
         Page<Personagem> personagens = buscarTodosPersonagensUseCase.buscarTodos(pageable);
-        return ResponseEntity.ok(personagens);
+        Page<PersonagemDTO> personagensDTO = personagemMapper.toDto(personagens);
+        return ResponseEntity.ok(personagensDTO);
     }
 
     @PostMapping
-    public ResponseEntity<Personagem> createPerson(@RequestBody Personagem personagem) {
+    public ResponseEntity<PersonagemDTO> createPerson(@RequestBody Personagem personagem) {
         Personagem personagemDominio = createPersonagemUseCase.salvar(personagem);
-        return ResponseEntity.status(201).body(personagemDominio);
+
+        PersonagemDTO personagemDTO = personagemMapper.toDto(personagemDominio);
+        return ResponseEntity.status(201).body(personagemDTO);
     }
 
     @PostMapping("/{id}/jutsu")
@@ -70,8 +78,15 @@ public class PersonagemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Personagem> atualizar(@PathVariable Long id, @RequestBody Personagem personagem) {
-        return ResponseEntity.ok(atualizarPersonagemUseCase.atualizar(id, personagem));
+    public ResponseEntity<PersonagemDTO> atualizar(
+            @PathVariable Long id,
+            @RequestBody AtualizarPersonagemCommand command) {
+        command.setId(id);
+
+        Personagem personagemDominio = atualizarPersonagemUseCase.atualizar(command);
+        PersonagemDTO personagemDTO = personagemMapper.toDto(personagemDominio);
+
+        return ResponseEntity.ok(personagemDTO);
     }
 
     @DeleteMapping("/{id}")
