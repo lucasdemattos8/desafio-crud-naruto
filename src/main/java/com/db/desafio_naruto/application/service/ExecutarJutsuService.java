@@ -1,8 +1,8 @@
-package com.db.desafio_naruto.application;
+package com.db.desafio_naruto.application.service;
 
 import org.springframework.stereotype.Service;
 import com.db.desafio_naruto.application.port.in.ExecutarJutsuUseCase;
-import com.db.desafio_naruto.application.port.out.PersonagemRepository;
+import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
 import com.db.desafio_naruto.domain.model.NinjaDeGenjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeNinjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeTaijutsu;
@@ -12,15 +12,15 @@ import com.db.desafio_naruto.domain.model.interfaces.Ninja;
 @Service
 public class ExecutarJutsuService implements ExecutarJutsuUseCase {
     
-    private final PersonagemRepository personagemRepository;
+    private final BuscarPorIdPersonagemPort personagemRepositoryPort;
 
-    public ExecutarJutsuService(PersonagemRepository personagemRepository) {
-        this.personagemRepository = personagemRepository;
+    public ExecutarJutsuService(BuscarPorIdPersonagemPort personagemRepositoryPort) {
+        this.personagemRepositoryPort = personagemRepositoryPort;
     }
 
     @Override
-    public String executarJutsu(Long id, boolean isDesviar) {
-        Personagem personagemBase = personagemRepository.buscarPorId(id)
+    public String executar(Long id, boolean isDesviar) {
+        Personagem personagemBase = personagemRepositoryPort.buscarPorId(id)
             .orElseThrow(() -> new RuntimeException("Personagem não encontrado"));
 
         Ninja ninja = switch (personagemBase.getTipoNinja()) {

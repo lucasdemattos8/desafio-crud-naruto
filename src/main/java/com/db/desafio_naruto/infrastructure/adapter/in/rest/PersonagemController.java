@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.db.desafio_naruto.application.port.in.CreatePersonagemUseCase;
+import com.db.desafio_naruto.application.port.in.SalvarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.ExecutarJutsuUseCase;
 import com.db.desafio_naruto.domain.model.Personagem;
 
@@ -17,11 +17,11 @@ import com.db.desafio_naruto.domain.model.Personagem;
 @RequestMapping("/personagens")
 public class PersonagemController {
 
-    private final CreatePersonagemUseCase createPersonagemUseCase;
+    private final SalvarPersonagemUseCase createPersonagemUseCase;
     private final ExecutarJutsuUseCase executarJutsuUseCase;
 
     public PersonagemController(
-        CreatePersonagemUseCase createPersonagemUseCase,
+        SalvarPersonagemUseCase createPersonagemUseCase,
         ExecutarJutsuUseCase executarJutsuUseCase) {
         this.createPersonagemUseCase = createPersonagemUseCase;
         this.executarJutsuUseCase = executarJutsuUseCase;
@@ -29,7 +29,7 @@ public class PersonagemController {
 
     @PostMapping
     public ResponseEntity<Personagem> createPerson(@RequestBody Personagem personagem) {
-        Personagem personagemDominio = createPersonagemUseCase.criar(personagem);
+        Personagem personagemDominio = createPersonagemUseCase.salvar(personagem);
         return ResponseEntity.status(201).body(personagemDominio);
     }
 
@@ -37,7 +37,7 @@ public class PersonagemController {
     public ResponseEntity<String> executarJutsu(
             @PathVariable Long id,
             @RequestParam(defaultValue = "false") boolean desviar) {
-        String resultado = executarJutsuUseCase.executarJutsu(id, desviar);
+        String resultado = executarJutsuUseCase.executar(id, desviar);
         return ResponseEntity.ok(resultado);
     }
     
