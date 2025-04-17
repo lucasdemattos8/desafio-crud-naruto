@@ -18,7 +18,6 @@ public class AtualizarPersonagemCommand {
 
     public AtualizarPersonagemCommand(Long id, String nome, int idade, String aldeia,
         List<String> jutsus, int chakra, TipoNinja tipoNinja) {
-        validarCampos();
         this.id = id;
         this.nome = nome;
         this.idade = idade;
@@ -26,6 +25,7 @@ public class AtualizarPersonagemCommand {
         this.jutsus = jutsus;
         this.chakra = chakra;
         this.tipoNinja = tipoNinja;
+        validarCampos();
     }
 
     public Long getId() {
