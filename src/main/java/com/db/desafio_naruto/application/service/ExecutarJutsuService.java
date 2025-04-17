@@ -7,6 +7,7 @@ import com.db.desafio_naruto.domain.model.NinjaDeGenjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeNinjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeTaijutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
+import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 import com.db.desafio_naruto.domain.model.interfaces.Ninja;
 
 @Service
@@ -22,6 +23,12 @@ public class ExecutarJutsuService implements ExecutarJutsuUseCase {
     public String executar(Long id, boolean isDesviar) {
         Personagem personagemBase = personagemRepositoryPort.buscarPorId(id)
             .orElseThrow(() -> new RuntimeException("Personagem não encontrado"));
+        
+        final TipoNinja tipoNinja = personagemBase.getTipoNinja();
+        
+        if (tipoNinja == null) {
+            throw new IllegalArgumentException("Tipo de ninja não pode ser null");
+        }
 
         Ninja ninja = switch (personagemBase.getTipoNinja()) {
             case NINJUTSU -> {
