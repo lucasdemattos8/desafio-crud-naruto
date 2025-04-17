@@ -30,6 +30,10 @@ public class PersonagemPersistenceMapper {
 
     public Personagem toDomain(PersonagemEntity entity) {
         Personagem personagem;
+
+        if (entity.getTipoNinja() == null) {
+            throw new IllegalArgumentException("Tipo de Ninja não pode ser nulo");
+        }
         
         switch (entity.getTipoNinja()) {
             case NINJUTSU -> personagem = new NinjaDeNinjutsu();
