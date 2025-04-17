@@ -1,18 +1,23 @@
 package com.db.desafio_naruto.domain.model;
 
+import java.util.List;
+
+import com.db.desafio_naruto.domain.model.enums.TipoNinja;
+
 public class Personagem {
 
     private Long id;
     private String nome;
     private int idade;
     private String aldeia;
-    private String[] jutsus;
+    private List<String> jutsus;
     private int chackra;
+    private TipoNinja tipoNinja;
 
     public Personagem() {
     }
 
-    public Personagem(Long id, String nome, int idade, String aldeia, String[] jutsus, int chackra) {
+    public Personagem(Long id, String nome, int idade, String aldeia, List<String> jutsus, int chackra) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
@@ -53,19 +58,28 @@ public class Personagem {
         this.aldeia = aldeia;
     }
 
-    public String[] getJutsus() {
+    public List<String> getJutsus() {
         return jutsus;
     }
 
-    public void setJutsus(String[] jutsus) {
+    public void setJutsus(List<String> jutsus) {
         this.jutsus = jutsus;
     }
 
-    public int getChackra() {
+    public int getChakra() {
         return chackra;
     }
 
-    public void setChackra(int chackra) {
+    public void setChakra(int chackra) {
         this.chackra = chackra;
     }
+
+    public TipoNinja getTipoNinja() {
+        return tipoNinja;
+    }
+
+    public void setTipoNinja(TipoNinja tipoNinja) {
+        this.tipoNinja = tipoNinja;
+    }
+    
 }
