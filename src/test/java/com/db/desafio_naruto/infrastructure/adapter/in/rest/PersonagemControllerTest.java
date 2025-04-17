@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +70,7 @@ class PersonagemControllerTest {
         );
     }
 
+    @SuppressWarnings("null")
     @Test
     void deveBuscarTodosPersonagensComSucesso() {
         Page<Personagem> personagemPage = new PageImpl<>(Arrays.asList(personagem));
@@ -91,6 +91,7 @@ class PersonagemControllerTest {
         verify(buscarTodosPersonagensUseCase).buscarTodos(any(Pageable.class));
     }
 
+    @SuppressWarnings("null")
     @Test
     void deveSalvarPersonagemComSucesso() {
         when(salvarPersonagemUseCase.salvar(personagem))
@@ -116,6 +117,7 @@ class PersonagemControllerTest {
         assertEquals("Naruto está usando um jutsu!", response.getBody());
     }
 
+    @SuppressWarnings("null")
     @Test
     void deveAtualizarPersonagemComSucesso() {
         AtualizarPersonagemCommand command = new AtualizarPersonagemCommand(
