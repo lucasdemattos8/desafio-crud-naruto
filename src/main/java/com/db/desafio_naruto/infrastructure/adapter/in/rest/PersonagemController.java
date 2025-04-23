@@ -25,6 +25,14 @@ import com.db.desafio_naruto.application.port.in.DeletarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.ExecutarJutsuUseCase;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemPersistenceMapper;
+import com.db.desafio_naruto.infrastructure.handler.dto.ErrorResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 
 @RestController
@@ -53,10 +61,22 @@ public class PersonagemController {
         this.personagemMapper = personagemMapper;
     }
     
+    @Operation(summary = "Lista todos os personagens",
+        description = "Retorna uma lista paginada de personagens com opções de ordenação")
+        @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de personagens recuperada com sucesso"),
+            @ApiResponse(responseCode = "401", description = "Não autorizado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Acesso negado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping
     public ResponseEntity<Page<PersonagemDTO>> buscarTodos(
+            @Parameter(description = "Número da página (começando em 0)") 
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Quantidade de itens por página") 
             @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Campo para ordenação (ex: id, nome, idade)") 
             @RequestParam(defaultValue = "id") String sort) {
         
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
@@ -65,6 +85,16 @@ public class PersonagemController {
         return ResponseEntity.ok(personagensDTO);
     }
 
+    @Operation(summary = "Busca um personagem por ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Personagem encontrado"),
+        @ApiResponse(responseCode = "404", description = "Personagem não encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Não autorizado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping("/{id}")
     public ResponseEntity<PersonagemDTO> buscarPorID(
             @PathVariable Long id) {
@@ -74,25 +104,66 @@ public class PersonagemController {
         return ResponseEntity.ok().body(personagemDTO);
     }
 
+    @Operation(summary = "Cria um novo personagem",
+            description = "Adiciona um novo personagem ao universo Naruto")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Personagem criado com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Não autorizado",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado",
+        content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping
-    public ResponseEntity<PersonagemDTO> createPerson(@RequestBody Personagem personagem) {
+    public ResponseEntity<PersonagemDTO> createPerson(
+            @Parameter(description = "Dados do novo personagem") 
+            @RequestBody Personagem personagem) {
         Personagem personagemDominio = createPersonagemUseCase.salvar(personagem);
 
         PersonagemDTO personagemDTO = personagemMapper.toDto(personagemDominio);
         return ResponseEntity.status(201).body(personagemDTO);
     }
 
+    @Operation(summary = "Executa um jutsu",
+            description = "Faz um personagem executar seu jutsu característico com opção de desvio")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Jutsu executado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Personagem não encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Não autorizado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/{id}/jutsu")
     public ResponseEntity<String> executarJutsu(
+            @Parameter(description = "ID do personagem") 
             @PathVariable Long id,
+            @Parameter(description = "Indica se o personagem deve desviar do ataque") 
             @RequestParam(defaultValue = "false") boolean desviar) {
         String resultado = executarJutsuUseCase.executar(id, desviar);
         return ResponseEntity.ok(resultado);
     }
 
+    @Operation(summary = "Atualiza um personagem",
+              description = "Atualiza os dados de um personagem existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Personagem atualizado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Personagem não encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Não autorizado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PutMapping("/{id}")
     public ResponseEntity<PersonagemDTO> atualizar(
+            @Parameter(description = "ID do personagem") 
             @PathVariable Long id,
+            @Parameter(description = "Novos dados do personagem") 
             @RequestBody AtualizarPersonagemCommand command) {
         command.setId(id);
 
@@ -102,6 +173,16 @@ public class PersonagemController {
         return ResponseEntity.ok(personagemDTO);
     }
 
+    @Operation(summary = "Deleta um personagem")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Personagem deletado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Personagem não encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Não autorizado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         deletarPersonagemUseCase.deletar(id);
