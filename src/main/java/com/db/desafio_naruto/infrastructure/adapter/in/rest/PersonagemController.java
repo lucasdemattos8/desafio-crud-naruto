@@ -28,7 +28,7 @@ import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.Perso
 
 
 @RestController
-@RequestMapping("/personagens")
+@RequestMapping("/api/v1/personagens")
 public class PersonagemController {
 
     private final SalvarPersonagemUseCase createPersonagemUseCase;
