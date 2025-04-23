@@ -19,6 +19,7 @@ import com.db.desafio_naruto.application.port.in.SalvarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
 import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
 import com.db.desafio_naruto.application.port.in.AtualizarPersonagemUseCase;
+import com.db.desafio_naruto.application.port.in.BuscarPorIdPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.BuscarTodosPersonagensUseCase;
 import com.db.desafio_naruto.application.port.in.DeletarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.ExecutarJutsuUseCase;
@@ -35,16 +36,19 @@ public class PersonagemController {
     private final DeletarPersonagemUseCase deletarPersonagemUseCase;
     private final AtualizarPersonagemUseCase atualizarPersonagemUseCase;
     private final BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase;
+    private final BuscarPorIdPersonagemUseCase buscarPorIdPersonagemUseCase;
     private final PersonagemPersistenceMapper personagemMapper;
 
     public PersonagemController(
         SalvarPersonagemUseCase createPersonagemUseCase, ExecutarJutsuUseCase executarJutsuUseCase,
         DeletarPersonagemUseCase deletarPersonagemUseCase, AtualizarPersonagemUseCase atualizarPersonagemUseCase,
-        BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase, PersonagemPersistenceMapper personagemMapper) {
+        BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase, PersonagemPersistenceMapper personagemMapper,
+        BuscarPorIdPersonagemUseCase buscarPorIdPersonagemUseCase) {
         this.createPersonagemUseCase = createPersonagemUseCase;
         this.executarJutsuUseCase = executarJutsuUseCase;
         this.deletarPersonagemUseCase = deletarPersonagemUseCase;
         this.atualizarPersonagemUseCase = atualizarPersonagemUseCase;
+        this.buscarPorIdPersonagemUseCase = buscarPorIdPersonagemUseCase;
         this.buscarTodosPersonagensUseCase = buscarTodosPersonagensUseCase;
         this.personagemMapper = personagemMapper;
     }
@@ -59,6 +63,15 @@ public class PersonagemController {
         Page<Personagem> personagens = buscarTodosPersonagensUseCase.buscarTodos(pageable);
         Page<PersonagemDTO> personagensDTO = personagemMapper.toDto(personagens);
         return ResponseEntity.ok(personagensDTO);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PersonagemDTO> buscarPorID(
+            @PathVariable Long id) {
+        Personagem personagemDominio = buscarPorIdPersonagemUseCase.buscarPorID(id);
+
+        PersonagemDTO personagemDTO = personagemMapper.toDto(personagemDominio);
+        return ResponseEntity.ok().body(personagemDTO);
     }
 
     @PostMapping
