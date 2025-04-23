@@ -47,8 +47,8 @@ public class PersonagemPersistenceAdapter implements
 
     @Override
     public Optional<Personagem> buscarPorId(Long id) {
-        PersonagemEntity entity = personagemRepository.findById(id).get();
-        return Optional.of(mapper.toDomain(entity));
+        return personagemRepository.findById(id)
+            .map(mapper::toDomain);
     }
 
     @Override
