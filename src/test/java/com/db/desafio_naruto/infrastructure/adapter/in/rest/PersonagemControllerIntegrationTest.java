@@ -180,4 +180,61 @@ public class PersonagemControllerIntegrationTest {
                 .header("Authorization", "Bearer " + "token_invalido"))
             .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void deveRetornarBadRequestAoEnviarEnumInvalido() throws Exception {
+        String personagemJson = """
+            {
+                "nome": "Kakashi",
+                "idade": 27,
+                "aldeia": "Konoha",
+                "tipoNinja": "INVALID_TYPE",
+                "chakra": 90
+            }
+            """;
+    
+        mockMvc.perform(post("/api/v1/personagens")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(personagemJson))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message", containsString("Valores aceitos")));
+    }
+    
+    @Test
+    void deveRetornarNotFoundAoBuscarPersonagemInexistente() throws Exception {
+        mockMvc.perform(get("/api/v1/personagens/999")
+                .header("Authorization", "Bearer " + token))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.message", containsString("não encontrado")));
+    }
+    
+    @Test
+    void deveRetornarUnauthorizedQuandoTokenInvalido() throws Exception {
+        mockMvc.perform(get("/api/v1/personagens")
+                .header("Authorization", "Bearer " + "token_invalido"))
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.message", containsString("Token inválido ou ausente")));
+    }
+    
+    @Test
+    void deveRetornarBadRequestAoEnviarJsonInvalido() throws Exception {
+        String invalidJson = "{invalid_json}";
+    
+        mockMvc.perform(post("/api/v1/personagens")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJson))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+    
+    @Test
+    void deveRetornarBadRequestAoEnviarRequestSemBody() throws Exception {
+        mockMvc.perform(post("/api/v1/personagens")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
 }
