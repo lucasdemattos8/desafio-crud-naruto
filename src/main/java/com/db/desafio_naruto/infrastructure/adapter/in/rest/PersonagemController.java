@@ -1,5 +1,7 @@
 package com.db.desafio_naruto.infrastructure.adapter.in.rest;
 
+import java.net.URI;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.db.desafio_naruto.application.port.in.SalvarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
 import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
+import com.db.desafio_naruto.application.port.out.UriBuilderPort;
 import com.db.desafio_naruto.application.port.in.AtualizarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.BuscarPorIdPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.BuscarTodosPersonagensUseCase;
@@ -48,12 +51,13 @@ public class PersonagemController {
     private final BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase;
     private final BuscarPorIdPersonagemUseCase buscarPorIdPersonagemUseCase;
     private final PersonagemPersistenceMapper personagemMapper;
+    private final UriBuilderPort uriBuilder;
 
     public PersonagemController(
         SalvarPersonagemUseCase createPersonagemUseCase, ExecutarJutsuUseCase executarJutsuUseCase,
         DeletarPersonagemUseCase deletarPersonagemUseCase, AtualizarPersonagemUseCase atualizarPersonagemUseCase,
         BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase, PersonagemPersistenceMapper personagemMapper,
-        BuscarPorIdPersonagemUseCase buscarPorIdPersonagemUseCase) {
+        BuscarPorIdPersonagemUseCase buscarPorIdPersonagemUseCase, UriBuilderPort uriBuilderPort) {
         this.createPersonagemUseCase = createPersonagemUseCase;
         this.executarJutsuUseCase = executarJutsuUseCase;
         this.deletarPersonagemUseCase = deletarPersonagemUseCase;
@@ -61,6 +65,7 @@ public class PersonagemController {
         this.buscarPorIdPersonagemUseCase = buscarPorIdPersonagemUseCase;
         this.buscarTodosPersonagensUseCase = buscarTodosPersonagensUseCase;
         this.personagemMapper = personagemMapper;
+        this.uriBuilder = uriBuilderPort;
     }
     
     @Operation(summary = "Lista todos os personagens",
@@ -121,10 +126,10 @@ public class PersonagemController {
     public ResponseEntity<PersonagemDTO> createPerson(
             @Parameter(description = "Dados do novo personagem") 
             @RequestBody Personagem personagem) {
-        Personagem personagemDominio = createPersonagemUseCase.salvar(personagem);
+        Personagem personagemSalvoDominio = createPersonagemUseCase.salvar(personagem);
+        URI location = uriBuilder.buildUri("/{id}", personagemSalvoDominio.getId());
 
-        PersonagemDTO personagemDTO = personagemMapper.toDto(personagemDominio);
-        return ResponseEntity.status(201).body(personagemDTO);
+        return ResponseEntity.created(location).body(personagemMapper.toDto(personagemSalvoDominio));
     }
 
     @Operation(summary = "Executa um jutsu",
