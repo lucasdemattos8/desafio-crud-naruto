@@ -13,7 +13,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.jayway.jsonpath.JsonPath;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

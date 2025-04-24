@@ -6,30 +6,38 @@ import static org.hamcrest.Matchers.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 
-import com.db.desafio_naruto.infrastructure.config.TestConfig;
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.repository.PersonagemJpaRepository;
 import com.jayway.jsonpath.JsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Import(TestConfig.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class PersonagemControllerIntegrationTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 
+public class PersonagemControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
-    
+
+    @Autowired
+    private PersonagemJpaRepository personagemJpaRepository;
+
     private String token;
+    
+    private Long narutoId;
+    private Long sasukeId;
+    private Long sakuraId;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -38,25 +46,32 @@ public class PersonagemControllerIntegrationTest {
             .andReturn();
             
         token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+        personagemJpaRepository.deleteAll();
+        
+        narutoId = criarPersonagemEObterID(criarNarutoJson());
+        sasukeId = criarPersonagemEObterID(criarSasukeJson());
+        sakuraId = criarPersonagemEObterID(criarSakuraJson());
     }
 
     @Test
     void deveListarPersonagensComSucesso() throws Exception {
-        mockMvc.perform(get("/api/v1/personagens")
+        ResultActions teste = mockMvc.perform(get("/api/v1/personagens")
                 .header("Authorization", "Bearer " + token)
                 .param("page", "0")
                 .param("size", "10")
                 .param("sort", "id"))
+            .andDo(print()) // isto irá imprimir toda a resposta
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(3)))
             .andExpect(jsonPath("$.content[0].nome", is("Naruto Uzumaki")))
             .andExpect(jsonPath("$.content[1].nome", is("Sasuke Uchiha")))
             .andExpect(jsonPath("$.content[2].nome", is("Sakura Haruno")));
+
     }
 
     @Test
     void deveBuscarPersonagemPorIdComSucesso() throws Exception {
-        mockMvc.perform(get("/api/v1/personagens/1")
+        mockMvc.perform(get("/api/v1/personagens/" + narutoId)
                 .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.nome", is("Naruto Uzumaki")))
@@ -82,7 +97,7 @@ public class PersonagemControllerIntegrationTest {
 
     @Test
     void deveExecutarJutsuComSucesso() throws Exception {
-        mockMvc.perform(post("/api/v1/personagens/1/jutsu")
+        mockMvc.perform(post("/api/v1/personagens/" + narutoId + "/jutsu")
                 .header("Authorization", "Bearer " + token)
                 .param("desviar", "false"))
             .andExpect(status().isOk())
@@ -122,7 +137,7 @@ public class PersonagemControllerIntegrationTest {
             }
             """;
 
-        mockMvc.perform(put("/api/v1/personagens/1")
+        mockMvc.perform(put("/api/v1/personagens/" + narutoId)
                 .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(atualizacaoJson))
@@ -133,18 +148,18 @@ public class PersonagemControllerIntegrationTest {
 
     @Test
     void deveDeletarPersonagemComSucesso() throws Exception {
-        mockMvc.perform(delete("/api/v1/personagens/1")
+        mockMvc.perform(delete("/api/v1/personagens/" + narutoId)
                 .header("Authorization", "Bearer " + token))
             .andExpect(status().isNoContent());
 
-        mockMvc.perform(get("/api/v1/personagens/1")
+        mockMvc.perform(get("/api/v1/personagens/" + narutoId)
                 .header("Authorization", "Bearer " + token))
             .andExpect(status().isNotFound());
     }
 
     @Test
     void deveExecutarJutsuComDesvioComSucesso() throws Exception {
-        mockMvc.perform(post("/api/v1/personagens/1/jutsu")
+        mockMvc.perform(post("/api/v1/personagens/" + narutoId + "/jutsu")
                 .header("Authorization", "Bearer " + token)
                 .param("desviar", "true"))
             .andExpect(status().isOk())
@@ -236,5 +251,65 @@ public class PersonagemControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").exists());
+    }
+
+    private Long criarPersonagemEObterID(String personagemJson) throws Exception {
+        MvcResult result = mockMvc.perform(post("/api/v1/personagens")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(personagemJson))
+                .andExpect(status().isCreated())
+                .andReturn();
+        
+        Integer id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
+        return id.longValue();
+    }
+
+    private String criarNarutoJson() {
+        return """
+            {
+                "nome": "Naruto Uzumaki",
+                "idade": 16,
+                "aldeia": "Konoha",
+                "tipoNinja": "NINJUTSU",
+                "chakra": 100,
+                "jutsus": [
+                    "Rasengan",
+                    "Kage Bunshin no Jutsu"
+                ]
+            }
+            """;
+    }
+
+    private String criarSasukeJson() {
+        return """
+            {
+                "nome": "Sasuke Uchiha",
+                "idade": 16,
+                "aldeia": "Konoha",
+                "tipoNinja": "NINJUTSU",
+                "chakra": 95,
+                "jutsus": [
+                    "Chidori",
+                    "Sharingan"
+                ]
+            }
+            """;
+    }
+
+    private String criarSakuraJson() {
+        return """
+            {
+                "nome": "Sakura Haruno",
+                "idade": 16,
+                "aldeia": "Konoha",
+                "tipoNinja": "TAIJUTSU",
+                "chakra": 70,
+                "jutsus": [
+                    "Chakra no Mesu",
+                    "Okasho"
+                ]
+            }
+            """;
     }
 }
