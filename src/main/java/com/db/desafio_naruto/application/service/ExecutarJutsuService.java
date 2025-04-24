@@ -5,7 +5,6 @@ import com.db.desafio_naruto.application.port.in.ExecutarJutsuUseCase;
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
 import com.db.desafio_naruto.application.port.out.LogPort;
 import com.db.desafio_naruto.domain.model.*;
-import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 import com.db.desafio_naruto.domain.model.interfaces.Ninja;
 
 @Service
@@ -32,13 +31,6 @@ public class ExecutarJutsuService implements ExecutarJutsuUseCase {
             
             logPort.debug("Personagem encontrado: {} do tipo {}", personagemBase.getNome(), personagemBase.getTipoNinja());
             
-            final TipoNinja tipoNinja = personagemBase.getTipoNinja();
-            
-            if (tipoNinja == null) {
-                logPort.error("Tipo de ninja null para personagem: {}", personagemBase.getNome());
-                throw new IllegalArgumentException("Tipo de ninja não pode ser null");
-            }
-
             Ninja ninja = switch (personagemBase.getTipoNinja()) {
                 case NINJUTSU -> {
                     logPort.debug("Criando ninja de Ninjutsu para: {}", personagemBase.getNome());
