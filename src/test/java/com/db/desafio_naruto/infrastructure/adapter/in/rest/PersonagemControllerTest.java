@@ -2,8 +2,11 @@ package com.db.desafio_naruto.infrastructure.adapter.in.rest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import com.db.desafio_naruto.application.port.in.*;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
 import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
+import com.db.desafio_naruto.application.port.out.UriBuilderPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemPersistenceMapper;
@@ -45,6 +49,9 @@ class PersonagemControllerTest {
     
     @Mock
     private PersonagemPersistenceMapper personagemMapper;
+
+    @Mock
+    private UriBuilderPort uriBuilderPort;
 
     @InjectMocks
     private PersonagemController controller;
@@ -93,17 +100,25 @@ class PersonagemControllerTest {
 
     @SuppressWarnings("null")
     @Test
-    void deveSalvarPersonagemComSucesso() {
+    void deveSalvarPersonagemComSucesso() throws URISyntaxException {
+        URI expectedUri = new URI("http://localhost:8080/api/v1/personagens/1");
         when(salvarPersonagemUseCase.salvar(personagem))
             .thenReturn(personagem);
         when(personagemMapper.toDto(personagem))
             .thenReturn(personagemDTO);
+        when(uriBuilderPort.buildUri(anyString(), any()))
+            .thenReturn(expectedUri);
 
         ResponseEntity<PersonagemDTO> response = controller.createPerson(personagem);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(expectedUri, response.getHeaders().getLocation());
         assertNotNull(response.getBody());
         assertEquals("Naruto", response.getBody().getNome());
+        
+        verify(salvarPersonagemUseCase).salvar(personagem);
+        verify(personagemMapper).toDto(personagem);
+        verify(uriBuilderPort).buildUri("/{id}", 1L);
     }
 
     @Test
