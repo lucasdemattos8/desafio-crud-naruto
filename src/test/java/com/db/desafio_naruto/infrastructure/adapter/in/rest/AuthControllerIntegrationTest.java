@@ -17,7 +17,7 @@ import com.jayway.jsonpath.JsonPath;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class AuthControllerIT {
+class AuthControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

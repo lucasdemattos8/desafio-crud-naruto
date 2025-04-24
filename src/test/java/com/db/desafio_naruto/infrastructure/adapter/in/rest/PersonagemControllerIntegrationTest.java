@@ -24,7 +24,7 @@ import com.jayway.jsonpath.JsonPath;
 @ActiveProfiles("test")
 @Import(TestConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class PersonagemControllerIT {
+public class PersonagemControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
