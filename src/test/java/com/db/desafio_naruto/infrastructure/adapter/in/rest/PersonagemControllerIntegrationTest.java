@@ -36,8 +36,6 @@ public class PersonagemControllerIntegrationTest {
     private String token;
     
     private Long narutoId;
-    private Long sasukeId;
-    private Long sakuraId;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -49,12 +47,13 @@ public class PersonagemControllerIntegrationTest {
         personagemJpaRepository.deleteAll();
         
         narutoId = criarPersonagemEObterID(criarNarutoJson());
-        sasukeId = criarPersonagemEObterID(criarSasukeJson());
-        sakuraId = criarPersonagemEObterID(criarSakuraJson());
+        criarPersonagemEObterID(criarSasukeJson());
+        criarPersonagemEObterID(criarSakuraJson());
     }
 
     @Test
     void deveListarPersonagensComSucesso() throws Exception {
+        @SuppressWarnings("unused")
         ResultActions teste = mockMvc.perform(get("/api/v1/personagens")
                 .header("Authorization", "Bearer " + token)
                 .param("page", "0")
