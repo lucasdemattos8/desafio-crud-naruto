@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
 import com.db.desafio_naruto.application.port.out.DeletarPersonagemPort;
+import com.db.desafio_naruto.application.port.out.LogPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,6 +25,9 @@ public class DeletarPersonagemServiceTest {
     @Mock
     private BuscarPorIdPersonagemPort buscarPorIdPersonagemPort;
     
+    @Mock
+    private LogPort logPort;
+    
     @InjectMocks
     private DeletarPersonagemService service;
     
@@ -32,6 +36,7 @@ public class DeletarPersonagemServiceTest {
         Long id = 1L;
         Personagem personagem = new Personagem();
         personagem.setId(id);
+        personagem.setNome("Naruto");
         
         when(buscarPorIdPersonagemPort.buscarPorId(id))
             .thenReturn(Optional.of(personagem));
@@ -40,6 +45,9 @@ public class DeletarPersonagemServiceTest {
         
         assertDoesNotThrow(() -> service.deletar(id));
         
+        verify(logPort).info("Iniciando processo de deleção do personagem ID: {}", id);
+        verify(logPort).debug("Personagem encontrado para deleção: {} (ID: {})", personagem.getNome(), id);
+        verify(logPort).info("Personagem deletado com sucesso: {} (ID: {})", personagem.getNome(), id);
         verify(buscarPorIdPersonagemPort).buscarPorId(id);
         verify(deletarPersonagemPort).deletar(id);
     }
@@ -54,7 +62,31 @@ public class DeletarPersonagemServiceTest {
             () -> service.deletar(id));
         
         assertEquals("Personagem com ID 1 não encontrado!", exception.getMessage());
+        verify(logPort).info("Iniciando processo de deleção do personagem ID: {}", id);
+        verify(logPort).error("Tentativa de deletar personagem inexistente. ID: {}", id);
         verify(buscarPorIdPersonagemPort).buscarPorId(id);
         verify(deletarPersonagemPort, never()).deletar(anyLong());
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoErroNaDelecao() {
+        Long id = 1L;
+        Personagem personagem = new Personagem();
+        personagem.setId(id);
+        personagem.setNome("Naruto");
+        
+        when(buscarPorIdPersonagemPort.buscarPorId(id))
+            .thenReturn(Optional.of(personagem));
+        
+        doThrow(new RuntimeException("Erro ao deletar"))
+            .when(deletarPersonagemPort).deletar(id);
+        
+        assertThrows(RuntimeException.class, () -> service.deletar(id));
+        
+        verify(logPort).info("Iniciando processo de deleção do personagem ID: {}", id);
+        verify(logPort).debug("Personagem encontrado para deleção: {} (ID: {})", personagem.getNome(), id);
+        verify(logPort).error(eq("Erro ao deletar personagem ID: {}"), eq(id), any(RuntimeException.class));
+        verify(buscarPorIdPersonagemPort).buscarPorId(id);
+        verify(deletarPersonagemPort).deletar(id);
     }
 }

@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.db.desafio_naruto.application.port.out.LogPort;
 import com.db.desafio_naruto.application.port.out.SalvarPersonagemPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
@@ -21,6 +22,9 @@ class SalvarPersonagemServiceTest {
     
     @Mock
     private SalvarPersonagemPort salvarPersonagemPort;
+    
+    @Mock
+    private LogPort logPort;
     
     @InjectMocks
     private SalvarPersonagemService service;
@@ -64,5 +68,18 @@ class SalvarPersonagemServiceTest {
         assertEquals(TipoNinja.NINJUTSU, resultado.getTipoNinja());
         
         verify(salvarPersonagemPort).salvar(any(Personagem.class));
+        verify(logPort).info(eq("Iniciando salvamento do personagem: {}"), eq("Naruto"));
+        verify(logPort).debug(eq("Personagem salvo com sucesso: {}"), eq(1L));
+    }
+
+    @Test
+    void deveLancarExcecaoELogarErro() {
+        when(salvarPersonagemPort.salvar(any(Personagem.class)))
+            .thenThrow(new RuntimeException("Erro ao salvar"));
+
+        assertThrows(RuntimeException.class, () -> service.salvar(personagem));
+        
+        verify(logPort).info(eq("Iniciando salvamento do personagem: {}"), eq("Naruto"));
+        verify(logPort).error(eq("Erro ao salvar personagem: {}"), eq("Naruto"), any(RuntimeException.class));
     }
 }

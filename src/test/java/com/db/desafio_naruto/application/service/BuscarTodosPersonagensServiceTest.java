@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.db.desafio_naruto.application.port.out.BuscarTodosPersonagensPort;
+import com.db.desafio_naruto.application.port.out.LogPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 
@@ -26,6 +27,9 @@ public class BuscarTodosPersonagensServiceTest {
     
     @Mock
     private BuscarTodosPersonagensPort buscarTodosPersonagensPort;
+
+    @Mock
+    private LogPort logPort;
 
     @InjectMocks
     private BuscarTodosPersonagensService service;
@@ -71,6 +75,10 @@ public class BuscarTodosPersonagensServiceTest {
         assertEquals(2L, resultado.getContent().get(1).getId());
         assertEquals("Sasuke", resultado.getContent().get(1).getNome());
         
+        verify(logPort).info("Iniciando busca paginada de personagens: página {}, tamanho {}", 
+            pageable.getPageNumber(), pageable.getPageSize());
+        verify(logPort).debug("Busca concluída. Total de elementos: {}, Total de páginas: {}", 
+            resultado.getTotalElements(), resultado.getTotalPages());
         verify(buscarTodosPersonagensPort).buscarTodos(pageable);
     }
 
@@ -85,6 +93,23 @@ public class BuscarTodosPersonagensServiceTest {
         assertTrue(resultado.getContent().isEmpty());
         assertEquals(0, resultado.getTotalElements());
         
+        verify(logPort).info("Iniciando busca paginada de personagens: página {}, tamanho {}", 
+            pageable.getPageNumber(), pageable.getPageSize());
+        verify(logPort).debug("Busca concluída. Total de elementos: {}, Total de páginas: {}", 
+            resultado.getTotalElements(), resultado.getTotalPages());
+        verify(buscarTodosPersonagensPort).buscarTodos(pageable);
+    }
+
+    @Test
+    void deveLancarExcecaoELogarErro() {
+        when(buscarTodosPersonagensPort.buscarTodos(pageable))
+            .thenThrow(new RuntimeException("Erro ao buscar personagens"));
+
+        assertThrows(RuntimeException.class, () -> service.buscarTodos(pageable));
+        
+        verify(logPort).info("Iniciando busca paginada de personagens: página {}, tamanho {}", 
+            pageable.getPageNumber(), pageable.getPageSize());
+        verify(logPort).error(eq("Erro ao buscar personagens"), any(RuntimeException.class));
         verify(buscarTodosPersonagensPort).buscarTodos(pageable);
     }
 }

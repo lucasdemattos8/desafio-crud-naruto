@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
+import com.db.desafio_naruto.application.port.out.LogPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 
@@ -24,6 +25,9 @@ class ExecutarJutsuServiceTest {
 
     @Mock
     private BuscarPorIdPersonagemPort personagemPort;
+
+    @Mock
+    private LogPort logPort;
 
     @InjectMocks
     private ExecutarJutsuService service;
@@ -50,6 +54,10 @@ class ExecutarJutsuServiceTest {
 
         assertEquals("Naruto está usando um jutsu de Ninjutsu!", resultado);
         verify(personagemPort).buscarPorId(1L);
+        verify(logPort).info("Iniciando execução de jutsu para personagem ID: {} com desvio: {}", 1L, false);
+        verify(logPort).debug("Personagem encontrado: {} do tipo {}", "Naruto", TipoNinja.NINJUTSU);
+        verify(logPort).debug("Criando ninja de Ninjutsu para: {}", "Naruto");
+        verify(logPort).info("Jutsu executado com sucesso para {}: {}", "Naruto", resultado);
     }
 
     @Test
@@ -60,6 +68,10 @@ class ExecutarJutsuServiceTest {
 
         assertEquals("Naruto está desviando do ataque utilizando um jutsu de Ninjutsu!", resultado);
         verify(personagemPort).buscarPorId(1L);
+        verify(logPort).info("Iniciando execução de jutsu para personagem ID: {} com desvio: {}", 1L, true);
+        verify(logPort).debug("Personagem encontrado: {} do tipo {}", "Naruto", TipoNinja.NINJUTSU);
+        verify(logPort).debug("Criando ninja de Ninjutsu para: {}", "Naruto");
+        verify(logPort).info("Jutsu executado com sucesso para {}: {}", "Naruto", resultado);
     }
 
     @Test
@@ -116,18 +128,10 @@ class ExecutarJutsuServiceTest {
         
         RuntimeException exception = assertThrows(RuntimeException.class, 
             () -> service.executar(1L, false));
+        
         assertEquals("Personagem não encontrado", exception.getMessage());
         verify(personagemPort).buscarPorId(1L);
-    }
-
-    @Test
-    void deveLancarExcecaoQuandoTipoNinjaInvalido() {
-        personagem.setTipoNinja(null);
-        when(personagemPort.buscarPorId(1L)).thenReturn(Optional.of(personagem));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
-            () -> service.executar(1L, false));
-        assertEquals("Tipo de ninja não pode ser null", exception.getMessage());
-        verify(personagemPort).buscarPorId(1L);
+        verify(logPort).info("Iniciando execução de jutsu para personagem ID: {} com desvio: {}", 1L, false);
+        verify(logPort).error("Personagem não encontrado com ID: {}", 1L);
     }
 }

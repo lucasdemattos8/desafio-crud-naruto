@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
 import com.db.desafio_naruto.application.port.out.AtualizarPersonagemPort;
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
+import com.db.desafio_naruto.application.port.out.LogPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 
@@ -27,6 +28,9 @@ class AtualizarPersonagemServiceTest {
 
     @Mock
     private BuscarPorIdPersonagemPort buscarPorIdPersonagemPort;
+
+    @Mock
+    private LogPort logPort;
 
     @InjectMocks
     private AtualizarPersonagemService service;
@@ -84,6 +88,9 @@ class AtualizarPersonagemServiceTest {
         assertEquals(command.getChakra(), resultado.getChakra());
         assertEquals(command.getTipoNinja(), resultado.getTipoNinja());
 
+        verify(logPort).info("Iniciando atualização do personagem ID: {}", command.getId());
+        verify(logPort).debug("Personagem encontrado. Atualizando dados para ID: {}", command.getId());
+        verify(logPort).info("Personagem atualizado com sucesso: {} (ID: {})", resultado.getNome(), resultado.getId());
         verify(buscarPorIdPersonagemPort).buscarPorId(1L);
         verify(atualizarPersonagemPort).atualizar(any(Personagem.class));
     }
@@ -97,7 +104,23 @@ class AtualizarPersonagemServiceTest {
             () -> service.atualizar(command));
 
         assertEquals("Personagem não encontrado", exception.getMessage());
+        verify(logPort).info("Iniciando atualização do personagem ID: {}", command.getId());
+        verify(logPort).error("Tentativa de atualizar personagem inexistente. ID: {}", command.getId());
         verify(buscarPorIdPersonagemPort).buscarPorId(1L);
         verify(atualizarPersonagemPort, never()).atualizar(any());
+    }
+
+    @Test
+    void deveLancarELogarErroInesperado() {
+        when(buscarPorIdPersonagemPort.buscarPorId(1L))
+            .thenReturn(Optional.of(personagemExistente));
+        when(atualizarPersonagemPort.atualizar(any()))
+            .thenThrow(new RuntimeException("Erro ao atualizar"));
+
+        assertThrows(RuntimeException.class, () -> service.atualizar(command));
+
+        verify(logPort).info("Iniciando atualização do personagem ID: {}", command.getId());
+        verify(logPort).debug("Personagem encontrado. Atualizando dados para ID: {}", command.getId());
+        verify(logPort).error(eq("Erro ao atualizar personagem ID: {}"), eq(command.getId()), any(RuntimeException.class));
     }
 }
