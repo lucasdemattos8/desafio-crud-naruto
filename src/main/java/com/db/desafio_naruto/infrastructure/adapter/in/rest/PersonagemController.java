@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.db.desafio_naruto.application.port.in.SalvarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
+import com.db.desafio_naruto.application.port.in.command.CriarPersonagemCommand;
 import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
 import com.db.desafio_naruto.application.port.out.UriBuilderPort;
 import com.db.desafio_naruto.application.port.in.AtualizarPersonagemUseCase;
@@ -123,9 +124,9 @@ public class PersonagemController {
         content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
-    public ResponseEntity<PersonagemDTO> createPerson(
+    public ResponseEntity<PersonagemDTO> criarPessoa(
             @Parameter(description = "Dados do novo personagem") 
-            @RequestBody Personagem personagem) {
+            @RequestBody CriarPersonagemCommand personagem) {
         Personagem personagemSalvoDominio = createPersonagemUseCase.salvar(personagem);
         URI location = uriBuilder.buildUri("/{id}", personagemSalvoDominio.getId());
 

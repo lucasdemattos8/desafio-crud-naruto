@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.db.desafio_naruto.application.port.in.*;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
+import com.db.desafio_naruto.application.port.in.command.CriarPersonagemCommand;
 import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
 import com.db.desafio_naruto.application.port.out.UriBuilderPort;
 import com.db.desafio_naruto.domain.model.Personagem;
@@ -101,22 +102,28 @@ class PersonagemControllerTest {
     @SuppressWarnings("null")
     @Test
     void deveSalvarPersonagemComSucesso() throws URISyntaxException {
+        CriarPersonagemCommand command = new CriarPersonagemCommand(
+            1L, "Naruto", 17, "Konoha", 
+            Arrays.asList("Rasengan"), 100, 
+            TipoNinja.NINJUTSU
+        );
         URI expectedUri = new URI("http://localhost:8080/api/v1/personagens/1");
-        when(salvarPersonagemUseCase.salvar(personagem))
+
+        when(salvarPersonagemUseCase.salvar(command))
             .thenReturn(personagem);
         when(personagemMapper.toDto(personagem))
             .thenReturn(personagemDTO);
         when(uriBuilderPort.buildUri(anyString(), any()))
             .thenReturn(expectedUri);
 
-        ResponseEntity<PersonagemDTO> response = controller.createPerson(personagem);
+        ResponseEntity<PersonagemDTO> response = controller.criarPessoa(command);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(expectedUri, response.getHeaders().getLocation());
         assertNotNull(response.getBody());
         assertEquals("Naruto", response.getBody().getNome());
         
-        verify(salvarPersonagemUseCase).salvar(personagem);
+        verify(salvarPersonagemUseCase).salvar(command);
         verify(personagemMapper).toDto(personagem);
         verify(uriBuilderPort).buildUri("/{id}", 1L);
     }

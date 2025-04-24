@@ -1,6 +1,8 @@
 package com.db.desafio_naruto.application.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -12,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.db.desafio_naruto.application.port.in.command.CriarPersonagemCommand;
 import com.db.desafio_naruto.application.port.out.LogPort;
 import com.db.desafio_naruto.application.port.out.SalvarPersonagemPort;
 import com.db.desafio_naruto.domain.model.Personagem;
@@ -29,46 +32,48 @@ class SalvarPersonagemServiceTest {
     @InjectMocks
     private SalvarPersonagemService service;
     
-    private Personagem personagem;
+    private CriarPersonagemCommand command;
     
     @BeforeEach
     void setUp() {
-        personagem = new Personagem();
-        personagem.setNome("Naruto");
-        personagem.setIdade(16);
-        personagem.setAldeia("Konoha");
-        personagem.setJutsus(Arrays.asList("Rasengan", "Kage Bunshin"));
-        personagem.setChakra(100);
-        personagem.setTipoNinja(TipoNinja.NINJUTSU);
+        command = new CriarPersonagemCommand(
+            null,
+            "Naruto Uzumaki",
+            17,
+            "Konoha",
+            Arrays.asList("Rasengan", "Sage Mode"),
+            150,
+            TipoNinja.NINJUTSU
+        );
     }
     
     @Test
     void deveSalvarPersonagemComSucesso() {
         Personagem personagemSalvo = new Personagem();
         personagemSalvo.setId(1L);
-        personagemSalvo.setNome(personagem.getNome());
-        personagemSalvo.setIdade(personagem.getIdade());
-        personagemSalvo.setAldeia(personagem.getAldeia());
-        personagemSalvo.setJutsus(personagem.getJutsus());
-        personagemSalvo.setChakra(personagem.getChakra());
-        personagemSalvo.setTipoNinja(personagem.getTipoNinja());
+        personagemSalvo.setNome(command.getNome());
+        personagemSalvo.setIdade(command.getIdade());
+        personagemSalvo.setAldeia(command.getAldeia());
+        personagemSalvo.setJutsus(command.getJutsus());
+        personagemSalvo.setChakra(command.getChakra());
+        personagemSalvo.setTipoNinja(command.getTipoNinja());
         
         when(salvarPersonagemPort.salvar(any(Personagem.class)))
             .thenReturn(personagemSalvo);
         
-        Personagem resultado = service.salvar(personagem);
+        Personagem resultado = service.salvar(command);
         
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
-        assertEquals("Naruto", resultado.getNome());
-        assertEquals(16, resultado.getIdade());
-        assertEquals("Konoha", resultado.getAldeia());
-        assertEquals(Arrays.asList("Rasengan", "Kage Bunshin"), resultado.getJutsus());
-        assertEquals(100, resultado.getChakra());
-        assertEquals(TipoNinja.NINJUTSU, resultado.getTipoNinja());
+        assertEquals(command.getNome(), resultado.getNome());
+        assertEquals(command.getIdade(), resultado.getIdade());
+        assertEquals(command.getAldeia(), resultado.getAldeia());
+        assertEquals(command.getJutsus(), resultado.getJutsus());
+        assertEquals(command.getChakra(), resultado.getChakra());
+        assertEquals(command.getTipoNinja(), resultado.getTipoNinja());
         
         verify(salvarPersonagemPort).salvar(any(Personagem.class));
-        verify(logPort).info(eq("Iniciando salvamento do personagem: {}"), eq("Naruto"));
+        verify(logPort).info(eq("Iniciando salvamento do personagem: {}"), eq(command.getNome()));
         verify(logPort).debug(eq("Personagem salvo com sucesso: {}"), eq(1L));
     }
 
@@ -77,9 +82,9 @@ class SalvarPersonagemServiceTest {
         when(salvarPersonagemPort.salvar(any(Personagem.class)))
             .thenThrow(new RuntimeException("Erro ao salvar"));
 
-        assertThrows(RuntimeException.class, () -> service.salvar(personagem));
+        assertThrows(RuntimeException.class, () -> service.salvar(command));
         
-        verify(logPort).info(eq("Iniciando salvamento do personagem: {}"), eq("Naruto"));
-        verify(logPort).error(eq("Erro ao salvar personagem: {}"), eq("Naruto"), any(RuntimeException.class));
+        verify(logPort).info(eq("Iniciando salvamento do personagem: {}"), eq(command.getNome()));
+        verify(logPort).error(eq("Erro ao salvar personagem: {}"), eq(command.getNome()), any(RuntimeException.class));
     }
 }
