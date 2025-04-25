@@ -9,6 +9,7 @@ public class Batalha {
     private Long ninjaAtual;
     private int vidaNinja1 = 100;
     private int vidaNinja2 = 100;
+    private AtaquePendente ataquePendente;
 
     public Batalha() {
     }
@@ -20,6 +21,7 @@ public class Batalha {
         this.finalizada = finalizada;
         this.turnoAtual = turnoAtual;
         this.ninjaAtual = ninjaAtual;
+        this.ataquePendente = null;
     }
 
     public Batalha(Long id, Personagem ninja1, Personagem ninja2,
@@ -33,6 +35,7 @@ public class Batalha {
         this.ninjaAtual = ninjaAtual;
         this.vidaNinja1 = vidaNinja1;
         this.vidaNinja2 = vidaNinja2;
+        this.ataquePendente = null;
     }
 
     public Long getId() {
@@ -127,5 +130,31 @@ public class Batalha {
     public boolean batalhaTerminou() {
         return finalizada || vidaNinja1 <= 0 || vidaNinja2 <= 0;
     }
+
+    public void registrarAtaquePendente(Long ninjaId, String nomeJutsu, int danoBase) {
+        // Fix string formatting
+        System.out.println(String.format("Registrando ataque pendente: ninja=%d, jutsu=%s, dano=%d", 
+            ninjaId, nomeJutsu, danoBase));
+        this.ataquePendente = new AtaquePendente(ninjaId, nomeJutsu, danoBase);
+    }
+    
+    public void limparAtaquePendente() {
+        // Fix string formatting
+        System.out.println(String.format("Limpando ataque pendente: %s", this.ataquePendente));
+        this.ataquePendente = null;
+    }
+
+    public boolean temAtaquePendente() {
+        return ataquePendente != null;
+    }
+
+    public AtaquePendente getAtaquePendente() {
+        return ataquePendente;
+    }
+    public record AtaquePendente(
+        Long ninjaAtacanteId,
+        String nomeJutsu,
+        int danoBase
+    ) {}
     
 }

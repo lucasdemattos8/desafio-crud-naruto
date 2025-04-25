@@ -39,6 +39,15 @@ public class BatalhaEntity {
     @Column(name = "vida_ninja2")
     private int vidaNinja2 = 100;
 
+    @Column(name = "ataque_ninja_id")
+    private Long ataqueNinjaId;
+    
+    @Column(name = "ataque_jutsu")
+    private String ataqueJutsu;
+    
+    @Column(name = "ataque_dano_base")
+    private Integer ataqueDanoBase;
+
     public BatalhaEntity() {
     }
 
@@ -52,6 +61,22 @@ public class BatalhaEntity {
         this.ninjaAtual = ninjaAtual;
         this.vidaNinja1 = vidaNinja1;
         this.vidaNinja2 = vidaNinja2;
+    }
+
+    public BatalhaEntity(Long id, PersonagemEntity ninja1, PersonagemEntity ninja2, boolean finalizada, int turnoAtual,
+            Long ninjaAtual, int vidaNinja1, int vidaNinja2, Long ataqueNinjaId, String ataqueJutsu,
+            Integer ataqueDanoBase) {
+        this.id = id;
+        this.ninja1 = ninja1;
+        this.ninja2 = ninja2;
+        this.finalizada = finalizada;
+        this.turnoAtual = turnoAtual;
+        this.ninjaAtual = ninjaAtual;
+        this.vidaNinja1 = vidaNinja1;
+        this.vidaNinja2 = vidaNinja2;
+        this.ataqueNinjaId = ataqueNinjaId;
+        this.ataqueJutsu = ataqueJutsu;
+        this.ataqueDanoBase = ataqueDanoBase;
     }
 
     public Long getId() {
@@ -117,5 +142,27 @@ public class BatalhaEntity {
     public void setVidaNinja2(int vidaNinja2) {
         this.vidaNinja2 = vidaNinja2;
     }
+    public Long getAtaqueNinjaId() {
+        return ataqueNinjaId;
+    }
 
+    public void setAtaqueNinjaId(Long ataqueNinjaId) {
+        this.ataqueNinjaId = ataqueNinjaId;
+    }
+
+    public String getAtaqueJutsu() {
+        return ataqueJutsu;
+    }
+
+    public void setAtaqueJutsu(String ataqueJutsu) {
+        this.ataqueJutsu = ataqueJutsu;
+    }
+
+    public Integer getAtaqueDanoBase() {
+        return ataqueDanoBase;
+    }
+
+    public void setAtaqueDanoBase(Integer ataqueDanoBase) {
+        this.ataqueDanoBase = ataqueDanoBase;
+    }
 }
