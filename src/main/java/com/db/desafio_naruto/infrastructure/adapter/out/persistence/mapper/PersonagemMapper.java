@@ -14,7 +14,7 @@ import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.PersonagemEntity;
 
 @Component
-public class PersonagemPersistenceMapper {
+public class PersonagemMapper {
 
     public PersonagemEntity toEntity(Personagem personagem) {
         PersonagemEntity entity = new PersonagemEntity();

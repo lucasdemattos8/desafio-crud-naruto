@@ -20,7 +20,7 @@ import org.springframework.data.domain.Pageable;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.PersonagemEntity;
-import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemPersistenceMapper;
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemMapper;
 
 @ExtendWith(MockitoExtension.class)
 class PersonagemPersistenceAdapterTest {
@@ -29,7 +29,7 @@ class PersonagemPersistenceAdapterTest {
     private PersonagemJpaRepository repository;
 
     @Mock
-    private PersonagemPersistenceMapper mapper;
+    private PersonagemMapper mapper;
 
     @InjectMocks
     private PersonagemPersistenceAdapter adapter;

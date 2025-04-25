@@ -13,7 +13,7 @@ import com.db.desafio_naruto.application.port.out.DeletarPersonagemPort;
 import com.db.desafio_naruto.application.port.out.SalvarPersonagemPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.PersonagemEntity;
-import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemPersistenceMapper;
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemMapper;
 
 @Component
 public class PersonagemPersistenceAdapter implements 
@@ -24,10 +24,10 @@ public class PersonagemPersistenceAdapter implements
         BuscarTodosPersonagensPort {
 
     private final PersonagemJpaRepository personagemRepository;
-    private final PersonagemPersistenceMapper mapper;
+    private final PersonagemMapper mapper;
 
     public PersonagemPersistenceAdapter(
-        PersonagemJpaRepository personagemRepository, PersonagemPersistenceMapper mapper) {
+        PersonagemJpaRepository personagemRepository, PersonagemMapper mapper) {
         this.personagemRepository = personagemRepository;
         this.mapper = mapper;
     }

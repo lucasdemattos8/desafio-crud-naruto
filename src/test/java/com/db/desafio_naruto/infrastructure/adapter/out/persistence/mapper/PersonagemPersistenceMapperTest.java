@@ -23,13 +23,13 @@ import com.db.desafio_naruto.infrastructure.adapter.out.persistence.PersonagemEn
 
 class PersonagemPersistenceMapperTest {
 
-    private PersonagemPersistenceMapper mapper;
+    private PersonagemMapper mapper;
     private Personagem personagem;
     private PersonagemEntity entity;
 
     @BeforeEach
     void setUp() {
-        mapper = new PersonagemPersistenceMapper();
+        mapper = new PersonagemMapper();
 
         personagem = new NinjaDeNinjutsu();
         personagem.setId(1L);

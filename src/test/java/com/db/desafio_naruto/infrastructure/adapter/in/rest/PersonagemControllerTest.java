@@ -28,7 +28,7 @@ import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
 import com.db.desafio_naruto.application.port.out.UriBuilderPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
-import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemPersistenceMapper;
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemMapper;
 
 @ExtendWith(MockitoExtension.class)
 class PersonagemControllerTest {
@@ -49,7 +49,7 @@ class PersonagemControllerTest {
     private BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase;
     
     @Mock
-    private PersonagemPersistenceMapper personagemMapper;
+    private PersonagemMapper personagemMapper;
 
     @Mock
     private UriBuilderPort uriBuilderPort;
