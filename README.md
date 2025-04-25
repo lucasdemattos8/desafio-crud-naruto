@@ -55,13 +55,13 @@ Ideal para desenvolvimento rápido e testes. Utiliza banco H2 em memória.
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/LucasMirandaIT/desafio-crud-naruto.git
+git clone https://github.com/lucasdemattos8/desafio-crud-naruto.git
 ```
 
 2. Execute a aplicação:
 
 ```bash
-mvn spring-boot:run -Dspring.profiles.active=dev
+mvn spring-boot:run
 ```
 
 > ℹ️ A aplicação estará disponível em `http://localhost:8080`
@@ -73,13 +73,13 @@ Recomendado para ambiente mais próximo ao de produção.
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/LucasMirandaIT/desafio-crud-naruto.git
+git clone https://github.com/lucasdemattos8/desafio-crud-naruto.git
 ```
 
 2. Execute com Docker Compose:
 
 ```bash
-docker-compose up -d
+docker-compose up --build
 ```
 
 > ℹ️ A aplicação estará disponível em `http://localhost:8080`
@@ -112,7 +112,7 @@ Este tutorial ensina como acessar o pgAdmin em um ambiente Docker e adicionar um
 Se ainda não iniciou os containers, use:
 
 ```bash
-   docker-compose --profile dev up --build
+   docker-compose up --build
 ```
 
 ---
@@ -247,7 +247,7 @@ curl -X POST "http://localhost:8080/api/v1/personagens/1/jutsu?desviar=false" \
 
 ![image](https://github.com/user-attachments/assets/671edd71-2708-45c2-a866-aff5ea699be0)
 
-> 🖼️ _Placeholder: Screenshot da listagem de personagens_
+> 🖼️ _Descrição: Screenshot da listagem de personagens_
 
 ## 🧪 Testes
 
