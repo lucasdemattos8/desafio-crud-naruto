@@ -24,7 +24,7 @@ import org.springframework.http.ResponseEntity;
 import com.db.desafio_naruto.application.port.in.*;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
 import com.db.desafio_naruto.application.port.in.command.CriarPersonagemCommand;
-import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
+import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemDTO;
 import com.db.desafio_naruto.application.port.out.UriBuilderPort;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;

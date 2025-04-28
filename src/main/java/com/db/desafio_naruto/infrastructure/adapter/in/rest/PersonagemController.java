@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.db.desafio_naruto.application.port.in.SalvarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
 import com.db.desafio_naruto.application.port.in.command.CriarPersonagemCommand;
-import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
+import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemDTO;
 import com.db.desafio_naruto.application.port.out.UriBuilderPort;
 import com.db.desafio_naruto.application.port.in.AtualizarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.BuscarPorIdPersonagemUseCase;

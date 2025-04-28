@@ -5,10 +5,10 @@ import java.util.Random;
 import org.springframework.stereotype.Service;
 
 import com.db.desafio_naruto.application.port.in.BatalhaUseCase;
-import com.db.desafio_naruto.application.port.in.dto.AcaoBatalhaRequestDTO;
-import com.db.desafio_naruto.application.port.in.dto.BatalhaResponseDTO;
-import com.db.desafio_naruto.application.port.in.dto.IniciarBatalhaRequestDTO;
-import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
+import com.db.desafio_naruto.application.port.in.dto.batalha.AcaoBatalhaRequestDTO;
+import com.db.desafio_naruto.application.port.in.dto.batalha.BatalhaResponseDTO;
+import com.db.desafio_naruto.application.port.in.dto.batalha.IniciarBatalhaRequestDTO;
+import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemDTO;
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
 import com.db.desafio_naruto.application.port.out.LogPort;
 import com.db.desafio_naruto.application.port.out.SalvarBatalhaPort;

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
+import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemDTO;
 import com.db.desafio_naruto.domain.model.NinjaDeGenjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeNinjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeTaijutsu;

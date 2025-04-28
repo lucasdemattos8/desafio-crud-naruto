@@ -1,4 +1,4 @@
-package com.db.desafio_naruto.application.port.in.dto;
+package com.db.desafio_naruto.application.port.in.dto.batalha;
 
 public class IniciarBatalhaRequestDTO {
 

@@ -1,4 +1,4 @@
-package com.db.desafio_naruto.application.port.in.dto;
+package com.db.desafio_naruto.application.port.in.dto.personagem;
 
 import java.util.List;
 

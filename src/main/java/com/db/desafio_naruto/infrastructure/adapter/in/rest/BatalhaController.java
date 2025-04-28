@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.db.desafio_naruto.application.port.in.BatalhaUseCase;
-import com.db.desafio_naruto.application.port.in.dto.AcaoBatalhaRequestDTO;
-import com.db.desafio_naruto.application.port.in.dto.BatalhaResponseDTO;
-import com.db.desafio_naruto.application.port.in.dto.IniciarBatalhaRequestDTO;
+import com.db.desafio_naruto.application.port.in.dto.batalha.AcaoBatalhaRequestDTO;
+import com.db.desafio_naruto.application.port.in.dto.batalha.BatalhaResponseDTO;
+import com.db.desafio_naruto.application.port.in.dto.batalha.IniciarBatalhaRequestDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
