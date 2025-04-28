@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemBatalhaDTO;
 import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemDTO;
 import com.db.desafio_naruto.domain.model.NinjaDeGenjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeNinjutsu;
@@ -60,6 +61,17 @@ public class PersonagemMapper {
             personagem.getIdade(),
             personagem.getAldeia(),
             personagem.getJutsus(),
+            personagem.getChakra(),
+            personagem.getTipoNinja()
+        );
+    }
+
+    public PersonagemBatalhaDTO toBatalhaEstadoDto(Personagem personagem) {
+        return new PersonagemBatalhaDTO(
+            personagem.getId(),
+            personagem.getNome(),
+            personagem.getJutsus(),
+            0,
             personagem.getChakra(),
             personagem.getTipoNinja()
         );

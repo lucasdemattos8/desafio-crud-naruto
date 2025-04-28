@@ -53,15 +53,9 @@ public class BatalhaService implements BatalhaUseCase {
         Batalha batalha = new Batalha(null, ninja1, ninja2, false, 1, ninja1.getId());
         batalha = batalhaPort.salvar(batalha);
 
-        return new BatalhaResponseDTO(
-            batalha.getId(),
-            personagemMapper.toDto(ninja1),
-            personagemMapper.toDto(ninja2),
-            false,
-            1,
-            ninja1.getId(),
-            "Batalha iniciada! " + ninja1.getNome() + " vs " + ninja2.getNome()
-        );
+        String mensagem = "Batalha iniciada! " + ninja1.getNome() + " vs " + ninja2.getNome();
+
+        return criarBatalhaResponse(batalha, mensagem);
     }
 
     @Override
@@ -71,16 +65,9 @@ public class BatalhaService implements BatalhaUseCase {
 
         if (batalha.isFinalizada()) {
             String vencedor = determinarVencedor(batalha);
+            String mensagem = "Batalha finalizada! Vencedor: " + vencedor;
             
-            return new BatalhaResponseDTO(
-                batalha.getId(),
-                personagemMapper.toDto(batalha.getNinja1()),
-                personagemMapper.toDto(batalha.getNinja2()),
-                true,
-                batalha.getTurnoAtual(),
-                batalha.getNinjaAtual(),
-                "Batalha finalizada! Vencedor: " + vencedor
-            );
+            return criarBatalhaResponse(batalha, mensagem);
         }
 
         if (!batalha.podeJogar(request.ninjaId())) {
@@ -132,15 +119,7 @@ public class BatalhaService implements BatalhaUseCase {
             mensagem = gerarMensagemDeRodada(batalha);
         }
 
-        return new BatalhaResponseDTO(
-            batalha.getId(),
-            personagemMapper.toDto(batalha.getNinja1()),
-            personagemMapper.toDto(batalha.getNinja2()),
-            batalha.isFinalizada(),
-            batalha.getTurnoAtual(),
-            batalha.getNinjaAtual(),
-            mensagem
-        );
+        return criarBatalhaResponse(batalha, mensagem);
     }
 
     private BatalhaResponseDTO processarAcao(Batalha batalha, AcaoBatalhaRequestDTO acao) {
@@ -167,15 +146,7 @@ public class BatalhaService implements BatalhaUseCase {
         ninja1Dto.setChakra(batalha.getChackraNinja1());
         ninja2Dto.setChakra(batalha.getChackraNinja2());
     
-        return new BatalhaResponseDTO(
-            batalha.getId(),
-            ninja1Dto,
-            ninja2Dto,
-            batalha.isFinalizada(),
-            batalha.getTurnoAtual(),
-            batalha.getNinjaAtual(),
-            mensagem
-        );
+        return criarBatalhaResponse(batalha, mensagem);
     }
         
     private String processarJutsu(Batalha batalha, Personagem atacante, Personagem defensor, String nomeJutsu) {
@@ -274,6 +245,24 @@ public class BatalhaService implements BatalhaUseCase {
         return batalha.getVidaNinja1() <= 0 ? 
             batalha.getNinja2().getNome() : 
             batalha.getNinja1().getNome();
+    }
+
+    private BatalhaResponseDTO criarBatalhaResponse(Batalha batalha, String mensagem) {
+        var ninja1Dto = personagemMapper.toBatalhaEstadoDto(batalha.getNinja1());
+        var ninja2Dto = personagemMapper.toBatalhaEstadoDto(batalha.getNinja2());
+        
+        ninja1Dto.setPontosDeVida(batalha.getVidaNinja1());
+        ninja2Dto.setPontosDeVida(batalha.getVidaNinja2());
+    
+        return new BatalhaResponseDTO(
+            batalha.getId(),
+            ninja1Dto,
+            ninja2Dto,
+            batalha.isFinalizada(),
+            batalha.getTurnoAtual(),
+            batalha.getNinjaAtual(),
+            mensagem
+        );
     }
 
     private String gerarMensagemDeAtaque(Personagem atacante, Personagem defensor, AtaquePendente ataque) {
