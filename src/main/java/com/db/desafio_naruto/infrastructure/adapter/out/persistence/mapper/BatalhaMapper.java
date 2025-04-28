@@ -23,7 +23,9 @@ public class BatalhaMapper {
             batalha.getTurnoAtual(),
             batalha.getNinjaAtual(),
             batalha.getVidaNinja1(), 
-            batalha.getVidaNinja2() 
+            batalha.getVidaNinja2(),
+            batalha.getChackraNinja1(),
+            batalha.getChackraNinja2()
         );
 
         if (batalha.getAtaquePendente() != null) {
@@ -45,7 +47,11 @@ public class BatalhaMapper {
             ninja2,
             entity.isFinalizada(),
             entity.getTurnoAtual(),
-            entity.getNinjaAtual()
+            entity.getNinjaAtual(),
+            entity.getVidaNinja1(),
+            entity.getVidaNinja2(),
+            entity.getChackraNinja1(),
+            entity.getChackraNinja2()
         );
 
         if (entity.getAtaqueNinjaId() != null) {

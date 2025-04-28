@@ -9,6 +9,8 @@ public class Batalha {
     private Long ninjaAtual;
     private int vidaNinja1 = 100;
     private int vidaNinja2 = 100;
+    private int chackraNinja1;
+    private int chackraNinja2;
     private AtaquePendente ataquePendente;
 
     public Batalha() {
@@ -21,12 +23,14 @@ public class Batalha {
         this.finalizada = finalizada;
         this.turnoAtual = turnoAtual;
         this.ninjaAtual = ninjaAtual;
+        this.chackraNinja1 = ninja1.getChakra();
+        this.chackraNinja2 = ninja2.getChakra();
         this.ataquePendente = null;
     }
 
     public Batalha(Long id, Personagem ninja1, Personagem ninja2,
                     boolean finalizada, int turnoAtual, Long ninjaAtual,
-                    int vidaNinja1, int vidaNinja2) {
+                    int vidaNinja1, int vidaNinja2, int chackraNinja1, int chackraNinja2) {
         this.id = id;
         this.ninja1 = ninja1;
         this.ninja2 = ninja2;
@@ -35,6 +39,8 @@ public class Batalha {
         this.ninjaAtual = ninjaAtual;
         this.vidaNinja1 = vidaNinja1;
         this.vidaNinja2 = vidaNinja2;
+        this.chackraNinja1 = chackraNinja1;
+        this.chackraNinja2 = chackraNinja2;
         this.ataquePendente = null;
     }
 
@@ -102,6 +108,28 @@ public class Batalha {
         this.vidaNinja2 = vidaNinja2;
     }
 
+    public int getChackraNinja1() {
+        return chackraNinja1;
+    }
+
+    public void setChackraNinja1(int chackraNinja1) {
+        this.chackraNinja1 = chackraNinja1;
+        if (this.ninja1 != null) {
+            this.ninja1.setChakra(chackraNinja1);
+        }
+    }
+
+    public int getChackraNinja2() {
+        return chackraNinja2;
+    }
+
+    public void setChackraNinja2(int chackraNinja2) {
+        this.chackraNinja2 = chackraNinja2;
+        if (this.ninja2 != null) {
+            this.ninja2.setChakra(chackraNinja2);
+        }
+    }
+
     public boolean podeJogar(Long ninjaId) {
         return !finalizada && ninjaAtual.equals(ninjaId);
     }
@@ -132,15 +160,10 @@ public class Batalha {
     }
 
     public void registrarAtaquePendente(Long ninjaId, String nomeJutsu, int danoBase) {
-        // Fix string formatting
-        System.out.println(String.format("Registrando ataque pendente: ninja=%d, jutsu=%s, dano=%d", 
-            ninjaId, nomeJutsu, danoBase));
         this.ataquePendente = new AtaquePendente(ninjaId, nomeJutsu, danoBase);
     }
     
     public void limparAtaquePendente() {
-        // Fix string formatting
-        System.out.println(String.format("Limpando ataque pendente: %s", this.ataquePendente));
         this.ataquePendente = null;
     }
 

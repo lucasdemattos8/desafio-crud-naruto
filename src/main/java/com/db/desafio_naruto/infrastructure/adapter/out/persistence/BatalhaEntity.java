@@ -39,6 +39,12 @@ public class BatalhaEntity {
     @Column(name = "vida_ninja2")
     private int vidaNinja2 = 100;
 
+    @Column(name = "chakra_ninja1")
+    private Integer chackraNinja1 = 100;
+
+    @Column(name = "chakra_ninja2")
+    private Integer chackraNinja2 = 100;
+
     @Column(name = "ataque_ninja_id")
     private Long ataqueNinjaId;
     
@@ -52,7 +58,7 @@ public class BatalhaEntity {
     }
 
     public BatalhaEntity(Long id, PersonagemEntity ninja1, PersonagemEntity ninja2, boolean finalizada, int turnoAtual,
-            Long ninjaAtual, int vidaNinja1, int vidaNinja2) {
+            Long ninjaAtual, int vidaNinja1, int vidaNinja2, int chackraNinja1, int chackraNinja2) {
         this.id = id;
         this.ninja1 = ninja1;
         this.ninja2 = ninja2;
@@ -61,14 +67,18 @@ public class BatalhaEntity {
         this.ninjaAtual = ninjaAtual;
         this.vidaNinja1 = vidaNinja1;
         this.vidaNinja2 = vidaNinja2;
+        this.chackraNinja1 = chackraNinja1;
+        this.chackraNinja2 = chackraNinja2;
     }
 
     public BatalhaEntity(Long id, PersonagemEntity ninja1, PersonagemEntity ninja2, boolean finalizada, int turnoAtual,
-            Long ninjaAtual, int vidaNinja1, int vidaNinja2, Long ataqueNinjaId, String ataqueJutsu,
+            Long ninjaAtual, int vidaNinja1, int vidaNinja2, int chackraNinja1, int chackraNinja2, Long ataqueNinjaId, String ataqueJutsu,
             Integer ataqueDanoBase) {
         this.id = id;
         this.ninja1 = ninja1;
         this.ninja2 = ninja2;
+        this.chackraNinja1 = chackraNinja1;
+        this.chackraNinja2 = chackraNinja2;
         this.finalizada = finalizada;
         this.turnoAtual = turnoAtual;
         this.ninjaAtual = ninjaAtual;
@@ -165,4 +175,21 @@ public class BatalhaEntity {
     public void setAtaqueDanoBase(Integer ataqueDanoBase) {
         this.ataqueDanoBase = ataqueDanoBase;
     }
+
+    public int getChackraNinja1() {
+        return chackraNinja1;
+    }
+
+    public void setChakraNinja1(Integer chakraNinja1) {
+        this.chackraNinja1 = chakraNinja1 != null ? chakraNinja1 : 100;
+    }
+
+    public int getChackraNinja2() {
+        return chackraNinja2;
+    }
+
+    public void setChakraNinja2(Integer chakraNinja2) {
+        this.chackraNinja2 = chakraNinja2 != null ? chakraNinja2 : 100;
+    }
+
 }
