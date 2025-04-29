@@ -5,6 +5,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
+
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 
 class AtualizarPersonagemCommandTest {
@@ -16,7 +18,7 @@ class AtualizarPersonagemCommandTest {
             "Naruto",
             16,
             "Konoha",
-            Arrays.asList("Rasengan"),
+            Arrays.asList(new Jutsu(1L, "Rasengan", 30)),
             100,
             TipoNinja.NINJUTSU
         ));
@@ -28,7 +30,8 @@ class AtualizarPersonagemCommandTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> 
             new AtualizarPersonagemCommand(
                 1L, nome, 16, "Konoha", 
-                Arrays.asList("Rasengan"), 100, 
+                Arrays.asList(new Jutsu(1L, "Rasengan", 30)),
+                100,
                 TipoNinja.NINJUTSU
             )
         );
@@ -40,7 +43,8 @@ class AtualizarPersonagemCommandTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> 
             new AtualizarPersonagemCommand(
                 1L, "Naruto", -1, "Konoha", 
-                Arrays.asList("Rasengan"), 100, 
+                Arrays.asList(new Jutsu(1L, "Rasengan", 30)),
+                100,
                 TipoNinja.NINJUTSU
             )
         );
@@ -52,7 +56,8 @@ class AtualizarPersonagemCommandTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> 
             new AtualizarPersonagemCommand(
                 1L, "Naruto", 16, "Konoha", 
-                Arrays.asList("Rasengan"), -1, 
+                Arrays.asList(new Jutsu(1L, "Rasengan", 30)),
+                -100,
                 TipoNinja.NINJUTSU
             )
         );
