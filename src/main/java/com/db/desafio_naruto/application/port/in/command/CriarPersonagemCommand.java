@@ -2,6 +2,7 @@ package com.db.desafio_naruto.application.port.in.command;
 
 import java.util.List;
 
+import com.db.desafio_naruto.application.port.in.dto.jutsu.JutsuRequestDTO;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 
 public class CriarPersonagemCommand {
@@ -10,7 +11,7 @@ public class CriarPersonagemCommand {
     private String nome;
     private int idade;
     private String aldeia;
-    private List<String> jutsus;
+    private List<JutsuRequestDTO> jutsus;
     private int chackra;
     private TipoNinja tipoNinja;
 
@@ -18,7 +19,7 @@ public class CriarPersonagemCommand {
     }
 
     public CriarPersonagemCommand(Long id, String nome, int idade, String aldeia,
-        List<String> jutsus, int chakra, TipoNinja tipoNinja) {
+        List<JutsuRequestDTO> jutsus, int chakra, TipoNinja tipoNinja) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
@@ -61,11 +62,11 @@ public class CriarPersonagemCommand {
         this.aldeia = aldeia;
     }
 
-    public List<String> getJutsus() {
+    public List<JutsuRequestDTO> getJutsus() {
         return jutsus;
     }
 
-    public void setJutsus(List<String> jutsus) {
+    public void setJutsus(List<JutsuRequestDTO> jutsus) {
         this.jutsus = jutsus;
     }
 

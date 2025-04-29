@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.db.desafio_naruto.application.port.in.SalvarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
 import com.db.desafio_naruto.application.port.in.command.CriarPersonagemCommand;
-import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
+import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemDTO;
 import com.db.desafio_naruto.application.port.out.UriBuilderPort;
 import com.db.desafio_naruto.application.port.in.AtualizarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.BuscarPorIdPersonagemUseCase;
@@ -28,7 +28,7 @@ import com.db.desafio_naruto.application.port.in.BuscarTodosPersonagensUseCase;
 import com.db.desafio_naruto.application.port.in.DeletarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.ExecutarJutsuUseCase;
 import com.db.desafio_naruto.domain.model.Personagem;
-import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemPersistenceMapper;
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemMapper;
 import com.db.desafio_naruto.infrastructure.handler.dto.ErrorResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,13 +51,13 @@ public class PersonagemController {
     private final AtualizarPersonagemUseCase atualizarPersonagemUseCase;
     private final BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase;
     private final BuscarPorIdPersonagemUseCase buscarPorIdPersonagemUseCase;
-    private final PersonagemPersistenceMapper personagemMapper;
+    private final PersonagemMapper personagemMapper;
     private final UriBuilderPort uriBuilder;
 
     public PersonagemController(
         SalvarPersonagemUseCase createPersonagemUseCase, ExecutarJutsuUseCase executarJutsuUseCase,
         DeletarPersonagemUseCase deletarPersonagemUseCase, AtualizarPersonagemUseCase atualizarPersonagemUseCase,
-        BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase, PersonagemPersistenceMapper personagemMapper,
+        BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase, PersonagemMapper personagemMapper,
         BuscarPorIdPersonagemUseCase buscarPorIdPersonagemUseCase, UriBuilderPort uriBuilderPort) {
         this.createPersonagemUseCase = createPersonagemUseCase;
         this.executarJutsuUseCase = executarJutsuUseCase;

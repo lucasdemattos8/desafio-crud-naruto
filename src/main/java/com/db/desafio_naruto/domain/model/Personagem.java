@@ -10,14 +10,14 @@ public class Personagem {
     private String nome;
     private int idade;
     private String aldeia;
-    private List<String> jutsus;
+    private List<Jutsu> jutsus;
     private int chackra;
     private TipoNinja tipoNinja;
 
     public Personagem() {
     }
 
-    public Personagem(Long id, String nome, int idade, String aldeia, List<String> jutsus, int chackra) {
+    public Personagem(Long id, String nome, int idade, String aldeia, List<Jutsu> jutsus, int chackra) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
@@ -58,11 +58,11 @@ public class Personagem {
         this.aldeia = aldeia;
     }
 
-    public List<String> getJutsus() {
+    public List<Jutsu> getJutsus() {
         return jutsus;
     }
 
-    public void setJutsus(List<String> jutsus) {
+    public void setJutsus(List<Jutsu> jutsus) {
         this.jutsus = jutsus;
     }
 

@@ -24,11 +24,12 @@ import org.springframework.http.ResponseEntity;
 import com.db.desafio_naruto.application.port.in.*;
 import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemCommand;
 import com.db.desafio_naruto.application.port.in.command.CriarPersonagemCommand;
-import com.db.desafio_naruto.application.port.in.dto.PersonagemDTO;
+import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemDTO;
 import com.db.desafio_naruto.application.port.out.UriBuilderPort;
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
-import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemPersistenceMapper;
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemMapper;
 
 @ExtendWith(MockitoExtension.class)
 class PersonagemControllerTest {
@@ -49,7 +50,7 @@ class PersonagemControllerTest {
     private BuscarTodosPersonagensUseCase buscarTodosPersonagensUseCase;
     
     @Mock
-    private PersonagemPersistenceMapper personagemMapper;
+    private PersonagemMapper personagemMapper;
 
     @Mock
     private UriBuilderPort uriBuilderPort;
@@ -67,7 +68,7 @@ class PersonagemControllerTest {
         personagem.setNome("Naruto");
         personagem.setIdade(16);
         personagem.setAldeia("Konoha");
-        personagem.setJutsus(Arrays.asList("Rasengan"));
+        personagem.setJutsus(Arrays.asList(new Jutsu(null, "Rasengan", 30)));
         personagem.setChakra(100);
         personagem.setTipoNinja(TipoNinja.NINJUTSU);
 
@@ -104,7 +105,7 @@ class PersonagemControllerTest {
     void deveSalvarPersonagemComSucesso() throws URISyntaxException {
         CriarPersonagemCommand command = new CriarPersonagemCommand(
             1L, "Naruto", 17, "Konoha", 
-            Arrays.asList("Rasengan"), 100, 
+            Arrays.asList(), 100, 
             TipoNinja.NINJUTSU
         );
         URI expectedUri = new URI("http://localhost:8080/api/v1/personagens/1");
@@ -144,7 +145,10 @@ class PersonagemControllerTest {
     void deveAtualizarPersonagemComSucesso() {
         AtualizarPersonagemCommand command = new AtualizarPersonagemCommand(
             1L, "Naruto", 17, "Konoha", 
-            Arrays.asList("Rasengan"), 100, 
+            Arrays.asList(
+                new Jutsu(null, "Rasengan", 20),
+                new Jutsu(null, "Sage Mode", 30)
+            ), 100, 
             TipoNinja.NINJUTSU
         );
 

@@ -14,11 +14,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.repository.BatalhaJpaRepository;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.repository.PersonagemJpaRepository;
 import com.jayway.jsonpath.JsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 
 @SpringBootTest
@@ -32,6 +31,9 @@ public class PersonagemControllerIntegrationTest {
 
     @Autowired
     private PersonagemJpaRepository personagemJpaRepository;
+    
+    @Autowired 
+    private BatalhaJpaRepository batalhaJpaRepository;
 
     private String token;
     
@@ -44,6 +46,7 @@ public class PersonagemControllerIntegrationTest {
             .andReturn();
             
         token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+        batalhaJpaRepository.deleteAll();
         personagemJpaRepository.deleteAll();
         
         narutoId = criarPersonagemEObterID(criarNarutoJson());
@@ -53,13 +56,11 @@ public class PersonagemControllerIntegrationTest {
 
     @Test
     void deveListarPersonagensComSucesso() throws Exception {
-        @SuppressWarnings("unused")
-        ResultActions teste = mockMvc.perform(get("/api/v1/personagens")
+        mockMvc.perform(get("/api/v1/personagens")
                 .header("Authorization", "Bearer " + token)
                 .param("page", "0")
                 .param("size", "10")
                 .param("sort", "id"))
-            .andDo(print()) // isto irá imprimir toda a resposta
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(3)))
             .andExpect(jsonPath("$.content[0].nome", is("Naruto Uzumaki")))
@@ -111,7 +112,17 @@ public class PersonagemControllerIntegrationTest {
                 "idade": 16,
                 "aldeia": "Konoha",
                 "tipoNinja": "TAIJUTSU",
-                "chakra": 75
+                "chakra": 75,
+                "jutsus": [
+                    {
+                        "nome": "Byakugan",
+                        "custoChakra": 15
+                    },
+                    {
+                        "nome": "Punho Suave",
+                        "custoChakra": 25
+                    }
+                ]
             }
             """;
 
@@ -121,7 +132,12 @@ public class PersonagemControllerIntegrationTest {
                 .content(personagemJson))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.nome", is("Hinata Hyuga")))
-            .andExpect(jsonPath("$.tipoNinja", is("TAIJUTSU")));
+            .andExpect(jsonPath("$.idade", is(16)))
+            .andExpect(jsonPath("$.aldeia", is("Konoha")))
+            .andExpect(jsonPath("$.tipoNinja", is("TAIJUTSU")))
+            .andExpect(jsonPath("$.chakra", is(75)))
+            .andExpect(jsonPath("$.jutsus[0]", is("Byakugan")))
+            .andExpect(jsonPath("$.jutsus[1]", is("Punho Suave")));
     }
 
     @Test
@@ -132,7 +148,17 @@ public class PersonagemControllerIntegrationTest {
                 "idade": 17,
                 "aldeia": "Konoha",
                 "tipoNinja": "NINJUTSU",
-                "chakra": 120
+                "chakra": 120,
+                    "jutsus": [
+                    {
+                        "nome": "Rasengan",
+                        "custoChakra": 15
+                    },
+                    {
+                        "nome": "Kage Bunshin no Jutsu",
+                        "custoChakra": 25
+                    }
+                ]
             }
             """;
 
@@ -141,8 +167,13 @@ public class PersonagemControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(atualizacaoJson))
             .andExpect(status().isOk())
+            .andExpect(jsonPath("$.nome", is("Naruto Uzumaki")))
             .andExpect(jsonPath("$.idade", is(17)))
-            .andExpect(jsonPath("$.chakra", is(120)));
+            .andExpect(jsonPath("$.aldeia", is("Konoha")))
+            .andExpect(jsonPath("$.tipoNinja", is("NINJUTSU")))
+            .andExpect(jsonPath("$.chakra", is(120)))
+            .andExpect(jsonPath("$.jutsus[0]", is("Rasengan")))
+            .andExpect(jsonPath("$.jutsus[1]", is("Kage Bunshin no Jutsu")));
     }
 
     @Test
@@ -273,8 +304,14 @@ public class PersonagemControllerIntegrationTest {
                 "tipoNinja": "NINJUTSU",
                 "chakra": 100,
                 "jutsus": [
-                    "Rasengan",
-                    "Kage Bunshin no Jutsu"
+                    {
+                        "nome": "Rasengan",
+                        "custoChakra": 30
+                    },
+                    {
+                        "nome": "Kage Bunshin no Jutsu",
+                        "custoChakra": 20
+                    }
                 ]
             }
             """;
@@ -289,13 +326,19 @@ public class PersonagemControllerIntegrationTest {
                 "tipoNinja": "NINJUTSU",
                 "chakra": 95,
                 "jutsus": [
-                    "Chidori",
-                    "Sharingan"
+                    {
+                        "nome": "Chidori",
+                        "custoChakra": 35
+                    },
+                    {
+                        "nome": "Sharingan",
+                        "custoChakra": 25
+                    }
                 ]
             }
             """;
     }
-
+    
     private String criarSakuraJson() {
         return """
             {
@@ -305,8 +348,14 @@ public class PersonagemControllerIntegrationTest {
                 "tipoNinja": "TAIJUTSU",
                 "chakra": 70,
                 "jutsus": [
-                    "Chakra no Mesu",
-                    "Okasho"
+                    {
+                        "nome": "Chakra no Mesu",
+                        "custoChakra": 15
+                    },
+                    {
+                        "nome": "Okasho",
+                        "custoChakra": 25
+                    }
                 ]
             }
             """;

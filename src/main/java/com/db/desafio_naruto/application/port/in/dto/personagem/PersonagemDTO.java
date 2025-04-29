@@ -1,4 +1,4 @@
-package com.db.desafio_naruto.application.port.in.dto;
+package com.db.desafio_naruto.application.port.in.dto.personagem;
 
 import java.util.List;
 
@@ -49,6 +49,9 @@ public class PersonagemDTO {
         return chakra;
     }
 
+    public void setChakra(int chakra) {
+        this.chakra = chakra;
+    }
 
     public TipoNinja getTipoNinja() {
         return tipoNinja;
