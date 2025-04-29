@@ -27,7 +27,7 @@ Uma API RESTful construída com Spring Boot e Arquitetura Hexagonal implementand
 ## 🛠 Tecnologias Utilizadas
 
 - Java 21
-- Spring Boot 3.3.4
+- Spring Boot 3.2.x
 - Spring Security + JWT
 - PostgreSQL / H2 Database
 - Docker & Docker Compose
@@ -171,7 +171,7 @@ Preencha com as seguintes informações:
   _(Ou `postgres` se estiver em dúvida)_
 - **Username:** `${DB_USERNAME}`
 - **Password:** `${DB_PASSWORD}`
-- ✅ Marque a opção “Save Password”
+- ✅ Marque a opção "Save Password"
 
 ![image](https://github.com/user-attachments/assets/493e2b5b-676d-4c35-bae2-45fe48cf23fa)
 
@@ -219,12 +219,21 @@ Agora você pode explorar as bases de dados, rodar queries e gerenciar tudo dire
 
 ```json
 {
-  "nome": "Naruto Uzumaki",
-  "idade": 16,
-  "aldeia": "Konoha",
-  "tipoNinja": "NINJUTSU",
-  "chakra": 100,
-  "jutsus": ["Rasengan", "Kage Bunshin no Jutsu"]
+    "nome": "Naruto",
+    "idade": 16,
+    "aldeia": "Konoha",
+    "jutsus": [
+        {
+            "nome": "Rasengan",
+            "custoChakra": 20
+        },
+        {
+            "nome": "Kage Bunshin",
+            "custoChakra": 15
+        }
+    ],
+    "chakra": 100,
+    "tipoNinja": "NINJUTSU"
 }
 ```
 
@@ -235,111 +244,231 @@ curl -X POST "http://localhost:8080/api/v1/personagens/1/jutsu?desviar=false" \
      -H "Authorization: Bearer seu_token"
 ```
 
-## ⚔️ Sistema de Batalhas Ninja
+## 🗺 Guia de Batalhas Ninja
 
-O sistema de batalhas implementa duelos entre ninjas com mecânicas baseadas em turnos.
+### 📋 Visão Geral
 
-### 🎯 Como Funciona
+As batalhas são duelos em turnos entre dois ninjas onde cada um pode atacar com jutsus ou tentar desviar de ataques.
 
-1. **Início da Batalha**
+### 🎯 Passo a Passo para Batalhar
 
-   - Dois ninjas são selecionados para o combate
-   - O desafiante sempre começa
-   - Cada ninja começa com 100 pontos de vida e seu chakra atual
-
-2. **Ciclo de Turnos**
-
-   - **Fase de Ação**: O ninja atual escolhe entre:
-     - Usar um jutsu (ataque)
-     - Tentar desviar (defesa)
-   - **Fase de Resolução**:
-     - Ataques têm chance de acerto baseada no tipo do ninja
-     - Desvios têm chance de sucesso variável
-     - Dano é calculado com base no jutsu + modificador aleatório
-
-3. **Condições de Vitória**
-   - Batalha termina quando um ninja perde toda a vida
-   - Ninja sem chakra não pode usar jutsus
-
-### 🔄 Endpoints de Batalha
-
-- `POST /api/v1/batalhas` - Iniciar nova batalha
-- `POST /api/v1/batalhas/{id}/acoes` - Executar ação na batalha
-- `GET /api/v1/batalhas/{id}` - Consultar estado da batalha
-
-### 📝 Exemplos de Requisições
-
-**Iniciar Batalha**
+1. **Criar Ninjas** (se ainda não existirem):
 
 ```json
-{
-  "ninjaDesafianteId": 1,
-  "ninjaDesafiadoId": 2
+POST /api/v1/personagens
+ {
+    "nome": "Naruto",
+    "idade": 16,
+    "aldeia": "Konoha",
+    "jutsus": [
+        {
+            "nome": "Rasengan",
+            "custoChakra": 20
+        },
+        {
+            "nome": "Kage Bunshin",
+            "custoChakra": 15
+        }
+    ],
+    "chakra": 100,
+    "tipoNinja": "NINJUTSU"
 }
 ```
 
-**Executar Ação**
+2. **Iniciar Batalha**:
 
 ```json
+POST /api/v1/batalhas
 {
-  "ninjaId": 1,
-  "tipoAcao": "USAR_JUTSU",
-  "nomeJutsu": "Rasengan"
+    "ninjaDesafianteId": 1,  // ID do Naruto
+    "ninjaDesafiadoId": 2    // ID do Sasuke
 }
 ```
 
-### 🎮 Fluxo de Batalha
-
-1. **Turno de Ataque**
+Resposta:
 
 ```json
-// Resposta após usar jutsu
 {
   "id": 1,
-  "mensagem": "Naruto está preparando Rasengan!",
-  "ninjaAtual": 2,
-  "turnoAtual": 2,
-  "finalizada": false
-}
-```
-
-2. **Turno de Defesa**
-
-```json
-// Resposta após tentativa de desvio
-{
-  "id": 1,
-  "mensagem": "Sasuke não conseguiu desviar do Rasengan! (-45 de vida)",
+  "mensagem": "Batalha iniciada! Naruto vs Sasuke",
   "ninjaAtual": 1,
-  "turnoAtual": 3,
-  "finalizada": false
+  "turnoAtual": 1,
+  "finalizada": false,
+  "ninjaDesafiante": {
+    "id": 1,
+    "nome": "Naruto",
+    "chakra": 100,
+    "pontosDeVida": 100,
+    "tipoNinja": "NINJUTSU"
+  },
+  "ninjaDesafiado": {
+    "id": 2,
+    "nome": "Sasuke",
+    "chakra": 100,
+    "pontosDeVida": 100,
+    "tipoNinja": "NINJUTSU"
+  },
+  "vencedor": null,
+  "log": []
 }
 ```
 
-### ⚡ Características Especiais
+3. **Fluxo de Combate**:
 
-- **Tipos de Ninja afetam batalha:**
+   a. **Atacar com Jutsu**:
 
-  - NINJUTSU: Maior dano em jutsus
-  - TAIJUTSU: Maior chance de desvio
-  - GENJUTSU: Maior chance de acerto
+   ```json
+   POST /api/v1/batalhas/1/acoes
+   {
+       "ninjaId": 1,
+       "tipoAcao": "USAR_JUTSU",
+       "nomeJutsu": "Rasengan"
+   }
+   ```
 
-- **Sistema de Chakra:**
+   Resposta:
 
-  - Cada jutsu consome chakra
-  - Chakra não regenera durante batalha
-  - Gestão estratégica é necessária
+   ```json
+   {
+     "id": 1,
+     "mensagem": "Naruto está preparando Rasengan!",
+     "ninjaAtual": 2,
+     "turnoAtual": 2,
+     "finalizada": false,
+     "ninjaDesafiante": {
+       "id": 1,
+       "nome": "Naruto",
+       "chakra": 80,
+       "pontosDeVida": 100,
+       "tipoNinja": "NINJUTSU"
+     },
+     "ninjaDesafiado": {
+       "id": 2,
+       "nome": "Sasuke",
+       "chakra": 100,
+       "pontosDeVida": 100,
+       "tipoNinja": "NINJUTSU"
+     },
+     "vencedor": null,
+     "log": ["Naruto está preparando Rasengan!"]
+   }
+   ```
 
-- **Aleatoriedade Controlada:**
-  - Dano tem componente base + variação
-  - Chance de desvio varia por tipo
-  - Mantém batalhas dinâmicas
+   b. **Tentar Desviar**:
+
+   ```json
+   POST /api/v1/batalhas/1/acoes
+   {
+       "ninjaId": 2,
+       "tipoAcao": "DESVIAR"
+   }
+   ```
+
+   Resposta (dois resultados possíveis):
+
+   ```json
+   {
+     "id": 1,
+     "mensagem": "Sasuke conseguiu desviar do jutsu Rasengan!",
+     "ninjaAtual": 2,
+     "turnoAtual": 3,
+     "finalizada": false,
+     "ninjaDesafiante": {
+       "id": 1,
+       "nome": "Naruto",
+       "chakra": 80,
+       "pontosDeVida": 100,
+       "tipoNinja": "NINJUTSU"
+     },
+     "ninjaDesafiado": {
+       "id": 2,
+       "nome": "Sasuke",
+       "chakra": 100,
+       "pontosDeVida": 100,
+       "tipoNinja": "NINJUTSU"
+     },
+     "vencedor": null,
+     "log": [
+       "Naruto está preparando Rasengan!",
+       "Sasuke conseguiu desviar do jutsu Rasengan!"
+     ]
+   }
+   ```
+
+   ou
+
+   ```json
+   {
+     "id": 1,
+     "mensagem": "Sasuke não conseguiu desviar do jutsu Rasengan! Perdeu 40 pontos de vida.",
+     "ninjaAtual": 2,
+     "turnoAtual": 3,
+     "finalizada": false,
+     "ninjaDesafiante": {
+       "id": 1,
+       "nome": "Naruto",
+       "chakra": 80,
+       "pontosDeVida": 100,
+       "tipoNinja": "NINJUTSU"
+     },
+     "ninjaDesafiado": {
+       "id": 2,
+       "nome": "Sasuke",
+       "chakra": 100,
+       "pontosDeVida": 60,
+       "tipoNinja": "NINJUTSU"
+     },
+     "vencedor": null,
+     "log": [
+       "Naruto está preparando Rasengan!",
+       "Sasuke não conseguiu desviar do jutsu Rasengan! Perdeu 40 pontos de vida."
+     ]
+   }
+   ```
+
+4. **Consultar Estado da Batalha**:
+
+```json
+GET /api/v1/batalhas/1
+```
+
+### 💡 Dicas de Batalha
+
+- **Tipos de Ninja e suas Vantagens**:
+
+  - TAIJUTSU: 40% chance de desvio
+  - NINJUTSU: 30% chance de desvio + dano aumentado
+  - GENJUTSU: 20% chance de desvio + maior precisão
+
+- **Gestão de Chakra**:
+
+  - Cada jutsu tem um custo de chakra
+  - Chakra não regenera durante a batalha
+  - É necessário ter pelo menos 10 de chakra para poder usar jutsus
+
+- **Turnos e Ações**:
+  1. Ninja 1 usa jutsu
+  2. Ninja 2 pode desviar
+  3. Ninja 2 usa jutsu
+  4. Ninja 1 pode desviar
+     E assim por diante...
+
+### 🎮 Exemplo de Batalha Completa
+
+1. Naruto inicia atacando com Rasengan (custa 20 de chakra)
+2. Sasuke tenta desviar
+3. Se Sasuke não desviar, perde vida baseado no dano do Rasengan
+4. Sasuke contra-ataca com Chidori
+5. Naruto tenta desviar
+6. A batalha continua até alguém perder toda a vida
+
+A batalha termina quando um dos ninjas fica com 0 de vida ou desiste.
 
 ## 📸 Screenshots
 
 ### Swagger UI
 
-![Screenshot da interface Swagger](https://github.com/user-attachments/assets/a4329530-8c15-46c7-8265-2eaaa5e75183)
+![image](https://github.com/user-attachments/assets/066f59d6-1031-41fc-bcbf-3c1d68235305)
 
 > 🖼️ _Descrição: Screenshot da demonstração da interface_
 
