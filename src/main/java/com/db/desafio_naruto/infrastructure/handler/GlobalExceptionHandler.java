@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.db.desafio_naruto.application.port.out.LogPort;
+import com.db.desafio_naruto.application.service.exceptions.BatalhaNaoEncontradaException;
+import com.db.desafio_naruto.application.service.exceptions.JutsuNaoEncontradoException;
+import com.db.desafio_naruto.application.service.exceptions.PersonagemNaoEncontradoException;
+import com.db.desafio_naruto.application.service.exceptions.TurnoInvalidoException;
 import com.db.desafio_naruto.infrastructure.handler.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
@@ -93,6 +97,54 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 "Erro de validação",
                 mensagem
+            ));
+    }
+
+    @ExceptionHandler(BatalhaNaoEncontradaException.class)
+    public ResponseEntity<ErrorResponse> handleBatalhaNaoEncontrada(BatalhaNaoEncontradaException ex) {
+        logPort.error("Batalha não encontrada: {}", ex.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                "Batalha não encontrada",
+                ex.getMessage()
+            ));
+    }
+
+    @ExceptionHandler(TurnoInvalidoException.class)
+    public ResponseEntity<ErrorResponse> handleTurnoInvalido(TurnoInvalidoException ex) {
+        logPort.error("Tentativa de jogar em turno inválido: {}", ex.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Turno inválido",
+                ex.getMessage()
+            ));
+    }
+
+    @ExceptionHandler(JutsuNaoEncontradoException.class)
+    public ResponseEntity<ErrorResponse> handleJutsuNaoEncontrado(JutsuNaoEncontradoException ex) {
+        logPort.error("Jutsu não encontrado: {}", ex.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Jutsu não encontrado",
+                ex.getMessage()
+            ));
+    }
+
+    @ExceptionHandler(PersonagemNaoEncontradoException.class)
+    public ResponseEntity<ErrorResponse> handlePersonagemNaoEncontrado(PersonagemNaoEncontradoException ex) {
+        logPort.error("Personagem não encontrado: {}", ex.getMessage());
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                "Personagem não encontrado",
+                ex.getMessage()
             ));
     }
 }

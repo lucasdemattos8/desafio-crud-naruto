@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +18,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.JutsuEntity;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.PersonagemEntity;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.mapper.PersonagemMapper;
 
@@ -27,6 +30,9 @@ class PersonagemPersistenceAdapterTest {
 
     @Mock
     private PersonagemJpaRepository repository;
+
+    @Mock
+    private JutsuJpaRepository jutsuRepository;
 
     @Mock
     private PersonagemMapper mapper;
@@ -39,12 +45,22 @@ class PersonagemPersistenceAdapterTest {
 
     @BeforeEach
     void setUp() {
+        List<Jutsu> jutsus = Arrays.asList(
+            new Jutsu(null, "Rasengan", 20),
+            new Jutsu(null, "Sage Mode", 30)
+        );
+
+        List<JutsuEntity> jutsusEntity = Arrays.asList(
+            new JutsuEntity("Rasengan", 20),
+            new JutsuEntity("Sage Mode", 30)
+        );
+
         personagem = new Personagem();
         personagem.setId(1L);
         personagem.setNome("Naruto");
         personagem.setIdade(16);
         personagem.setAldeia("Konoha");
-        personagem.setJutsus(Arrays.asList("Rasengan"));
+        personagem.setJutsus(jutsus);
         personagem.setChakra(100);
         personagem.setTipoNinja(TipoNinja.NINJUTSU);
 
@@ -53,7 +69,7 @@ class PersonagemPersistenceAdapterTest {
         entity.setNome("Naruto");
         entity.setIdade(16);
         entity.setAldeia("Konoha");
-        entity.setJutsus(Arrays.asList("Rasengan"));
+        entity.setJutsus(jutsusEntity);
         entity.setChakra(100);
         entity.setTipoNinja(TipoNinja.NINJUTSU);
     }
@@ -69,10 +85,18 @@ class PersonagemPersistenceAdapterTest {
         assertNotNull(resultado);
         assertEquals(personagem.getId(), resultado.getId());
         assertEquals(personagem.getNome(), resultado.getNome());
+        assertEquals(personagem.getIdade(), resultado.getIdade());
+        assertEquals(personagem.getAldeia(), resultado.getAldeia());
+        assertEquals(personagem.getChakra(), resultado.getChakra());
+        assertEquals(personagem.getTipoNinja(), resultado.getTipoNinja());
+        
+        assertEquals(personagem.getJutsus().size(), resultado.getJutsus().size());
+        assertEqualsJutsus(personagem, resultado);
         
         verify(mapper).toEntity(personagem);
         verify(repository).save(entity);
         verify(mapper).toDomain(entity);
+        verifyNoMoreInteractions(mapper, repository);
     }
 
     @Test
@@ -130,5 +154,14 @@ class PersonagemPersistenceAdapterTest {
         adapter.deletar(1L);
 
         verify(repository).deleteById(1L);
+    }
+
+    private void assertEqualsJutsus(Personagem personagemEsperado, Personagem personagemAtual) {
+        for (int i = 0; i < personagemEsperado.getJutsus().size(); i++) {
+            Jutsu expectedJutsu = personagemEsperado.getJutsus().get(i);
+            Jutsu actualJutsu = personagemAtual.getJutsus().get(i);
+            assertEquals(expectedJutsu.getNome(), actualJutsu.getNome());
+            assertEquals(expectedJutsu.getCustoChakra(), actualJutsu.getCustoChakra());
+        }
     }
 }

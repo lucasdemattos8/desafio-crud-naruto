@@ -1,11 +1,14 @@
 package com.db.desafio_naruto.application.service;
 
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.db.desafio_naruto.application.port.in.SalvarPersonagemUseCase;
 import com.db.desafio_naruto.application.port.in.command.CriarPersonagemCommand;
 import com.db.desafio_naruto.application.port.out.LogPort;
 import com.db.desafio_naruto.application.port.out.SalvarPersonagemPort;
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
 
 @Service
@@ -39,7 +42,13 @@ public class SalvarPersonagemService implements SalvarPersonagemUseCase {
             personagemCommand.getNome(),
             personagemCommand.getIdade(),
             personagemCommand.getAldeia(),
-            personagemCommand.getJutsus(),
+            personagemCommand.getJutsus().stream()
+                .map(jutsuDto -> new Jutsu(
+                    null, 
+                    jutsuDto.nome(), 
+                    jutsuDto.custoChakra()
+                ))
+                .collect(Collectors.toList()),
             personagemCommand.getChakra());
         personagem.setTipoNinja(personagemCommand.getTipoNinja());
         return personagem;

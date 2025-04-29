@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
 import com.db.desafio_naruto.application.port.out.LogPort;
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 
@@ -41,7 +42,7 @@ class ExecutarJutsuServiceTest {
         personagem.setNome("Naruto");
         personagem.setIdade(16);
         personagem.setAldeia("Konoha");
-        personagem.setJutsus(Arrays.asList("Rasengan"));
+        personagem.setJutsus(Arrays.asList(new Jutsu(null, "Rasengan", 50)));
         personagem.setChakra(100);
         personagem.setTipoNinja(TipoNinja.NINJUTSU);
     }

@@ -1,17 +1,19 @@
 package com.db.desafio_naruto.infrastructure.adapter.out.persistence;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,9 +27,9 @@ public class PersonagemEntity {
     private int idade;
     private String aldeia;
     
-    @ElementCollection
-    @CollectionTable(name = "personagem_jutsus")
-    private List<String> jutsus;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "personagem_id")
+    private List<JutsuEntity> jutsus;
     
     private int chakra;
     
@@ -35,15 +37,16 @@ public class PersonagemEntity {
     private TipoNinja tipoNinja;
 
     public PersonagemEntity() {
+        this.jutsus = new ArrayList<>();
     }
 
-    public PersonagemEntity(Long id, String nome, int idade, String aldeia, List<String> jutsus, int chakra,
+    public PersonagemEntity(Long id, String nome, int idade, String aldeia, List<JutsuEntity> jutsus, int chakra,
             TipoNinja tipoNinja) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
         this.aldeia = aldeia;
-        this.jutsus = jutsus;
+        this.jutsus = jutsus != null ? jutsus : new ArrayList<>();
         this.chakra = chakra;
         this.tipoNinja = tipoNinja;
     }
@@ -80,11 +83,11 @@ public class PersonagemEntity {
         this.aldeia = aldeia;
     }
 
-    public List<String> getJutsus() {
+    public List<JutsuEntity> getJutsus() {
         return jutsus;
     }
 
-    public void setJutsus(List<String> jutsus) {
+    public void setJutsus(List<JutsuEntity> jutsus) {
         this.jutsus = jutsus;
     }
 

@@ -17,6 +17,7 @@ import com.db.desafio_naruto.application.service.exceptions.JutsuNaoEncontradoEx
 import com.db.desafio_naruto.application.service.exceptions.PersonagemNaoEncontradoException;
 import com.db.desafio_naruto.application.service.exceptions.TurnoInvalidoException;
 import com.db.desafio_naruto.domain.model.Batalha;
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.Batalha.AtaquePendente;
 import com.db.desafio_naruto.domain.model.enums.TipoAcao;
@@ -152,9 +153,9 @@ public class BatalhaService implements BatalhaUseCase {
     private String processarJutsu(Batalha batalha, Personagem atacante, Personagem defensor, String nomeJutsu) {
         logPort.debug("Processando jutsu: {} usando {} contra {}", 
             atacante.getNome(), nomeJutsu, defensor.getNome());
-    
-        atacante.getJutsus().stream()
-            .filter(j -> j.equals(nomeJutsu))
+
+        Jutsu jutsuUtilizado = atacante.getJutsus().stream()
+            .filter(jutsu -> jutsu.getNome().equals(nomeJutsu))
             .findFirst()
             .orElseThrow(() -> new JutsuNaoEncontradoException(nomeJutsu));
     
@@ -163,7 +164,7 @@ public class BatalhaService implements BatalhaUseCase {
                 atacante.getNome(), nomeJutsu);
         }
     
-        int novoChakra = atacante.getChakra() - 10;
+        int novoChakra = atacante.getChakra() - jutsuUtilizado.getCustoChakra();
         atacante.setChakra(novoChakra);
         
         if (atacante.getId().equals(batalha.getNinja1().getId())) {

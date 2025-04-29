@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.db.desafio_naruto.application.port.out.BuscarTodosPersonagensPort;
 import com.db.desafio_naruto.application.port.out.LogPort;
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 
@@ -44,7 +45,7 @@ public class BuscarTodosPersonagensServiceTest {
         naruto.setNome("Naruto");
         naruto.setIdade(16);
         naruto.setAldeia("Konoha");
-        naruto.setJutsus(Arrays.asList("Rasengan"));
+        naruto.setJutsus(Arrays.asList(new Jutsu(null, "Rasengan", 30)));
         naruto.setChakra(100);
         naruto.setTipoNinja(TipoNinja.NINJUTSU);
 
@@ -53,7 +54,7 @@ public class BuscarTodosPersonagensServiceTest {
         sasuke.setNome("Sasuke");
         sasuke.setIdade(16);
         sasuke.setAldeia("Konoha");
-        sasuke.setJutsus(Arrays.asList("Chidori"));
+        sasuke.setJutsus(Arrays.asList(new Jutsu(null, "Chidori", 30)));
         sasuke.setChakra(100);
         sasuke.setTipoNinja(TipoNinja.NINJUTSU);
 

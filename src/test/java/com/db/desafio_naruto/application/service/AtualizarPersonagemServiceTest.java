@@ -1,6 +1,8 @@
 package com.db.desafio_naruto.application.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -17,6 +19,7 @@ import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemComm
 import com.db.desafio_naruto.application.port.out.AtualizarPersonagemPort;
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
 import com.db.desafio_naruto.application.port.out.LogPort;
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 
@@ -45,7 +48,6 @@ class AtualizarPersonagemServiceTest {
         personagemExistente.setNome("Naruto");
         personagemExistente.setIdade(16);
         personagemExistente.setAldeia("Konoha");
-        personagemExistente.setJutsus(Arrays.asList("Rasengan"));
         personagemExistente.setChakra(100);
         personagemExistente.setTipoNinja(TipoNinja.NINJUTSU);
 
@@ -54,7 +56,10 @@ class AtualizarPersonagemServiceTest {
             "Naruto Uzumaki",
             17,
             "Konoha",
-            Arrays.asList("Rasengan", "Sage Mode"),
+            Arrays.asList(
+                new Jutsu(null, "Rasengan", 20),
+                new Jutsu(null, "Sage Mode", 30)
+            ),
             150,
             TipoNinja.NINJUTSU
         );
