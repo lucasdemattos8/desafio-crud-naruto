@@ -59,7 +59,7 @@ public class PersonagemControllerIntegrationTest {
                 .param("page", "0")
                 .param("size", "10")
                 .param("sort", "id"))
-            .andDo(print()) // isto irá imprimir toda a resposta
+            .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(3)))
             .andExpect(jsonPath("$.content[0].nome", is("Naruto Uzumaki")))

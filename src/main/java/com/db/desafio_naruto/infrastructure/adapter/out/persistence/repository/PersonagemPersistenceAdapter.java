@@ -46,7 +46,7 @@ public class PersonagemPersistenceAdapter implements
             .collect(Collectors.toList());
         jutsusEntities = jutsuRepository.saveAll(jutsusEntities);
 
-        // Depois salva o personagem com os jutsus
+        
         PersonagemEntity entity = mapper.toEntity(personagem);
         entity.setJutsus(jutsusEntities); 
         entity = personagemRepository.save(entity);
