@@ -1,5 +1,8 @@
 package com.db.desafio_naruto.application.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.db.desafio_naruto.application.port.in.AtualizarPersonagemUseCase;
@@ -7,6 +10,7 @@ import com.db.desafio_naruto.application.port.in.command.AtualizarPersonagemComm
 import com.db.desafio_naruto.application.port.out.AtualizarPersonagemPort;
 import com.db.desafio_naruto.application.port.out.BuscarPorIdPersonagemPort;
 import com.db.desafio_naruto.application.port.out.LogPort;
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
 
 @Service
@@ -43,9 +47,13 @@ public class AtualizarPersonagemService implements AtualizarPersonagemUseCase {
             personagem.setNome(command.getNome());
             personagem.setIdade(command.getIdade());
             personagem.setAldeia(command.getAldeia());
-            personagem.setJutsus(command.getJutsus());
             personagem.setChakra(command.getChakra());
             personagem.setTipoNinja(command.getTipoNinja());
+
+            List<Jutsu> jutsus = command.getJutsus().stream()
+                .map(jutsuNome -> new Jutsu(null, jutsuNome.getNome(), 20))
+                .collect(Collectors.toList());
+            personagem.setJutsus(jutsus);
 
             Personagem atualizado = atualizarPersonagemPort.atualizar(personagem);
             logPort.info("Personagem atualizado com sucesso: {} (ID: {})", atualizado.getNome(), atualizado.getId());
