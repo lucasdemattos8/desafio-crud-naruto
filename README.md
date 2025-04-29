@@ -68,30 +68,30 @@ mvn spring-boot:run
 
 ### 🐳 Rodando com Docker (PostgreSQL)
 
-Recomendado para ambiente mais próximo ao de produção.
-
-1. Clone o repositório:
-
-```bash
-git clone https://github.com/lucasdemattos8/desafio-crud-naruto.git
-```
-
-2. Execute com Docker Compose:
-
-```bash
-docker-compose up --build
-```
+   Recomendado para ambiente mais próximo ao de produção.
+   
+   1. Clone o repositório:
+   
+   ```bash
+   git clone https://github.com/lucasdemattos8/desafio-crud-naruto.git
+   ```
+   
+   2. Execute com Docker Compose:
+   
+   ```bash
+   docker-compose up --build
+   ```
 
 > ℹ️ A aplicação estará disponível em `http://localhost:8080`
 
 #### Diferenças entre as Execuções
-
-| Característica | Maven (H2)      | Docker (PostgreSQL) |
-| -------------- | --------------- | ------------------- |
-| Banco de Dados | H2 (em memória) | PostgreSQL          |
-| Persistência   | Temporária      | Permanente          |
-| Inicialização  | Mais rápida     | Mais robusta        |
-| Uso            | Desenvolvimento | Prod-like           |
+   
+   | Característica | Maven (H2)      | Docker (PostgreSQL) |
+   | -------------- | --------------- | ------------------- |
+   | Banco de Dados | H2 (em memória) | PostgreSQL          |
+   | Persistência   | Temporária      | Permanente          |
+   | Inicialização  | Mais rápida     | Mais robusta        |
+   | Uso            | Desenvolvimento | Prod-like           |
 
 # 🐘 Acessando o pgAdmin e conectando ao serviço `postgresdb` via Docker
 
@@ -196,149 +196,108 @@ Agora você pode explorar as bases de dados, rodar queries e gerenciar tudo dire
 
 ### Autenticação
 
-- `POST /api/v1/auth` - Gerar token JWT
+   - `POST /api/v1/auth` - Gerar token JWT
 
 ### Personagens
 
-- `GET /api/v1/personagens` - Listar todos os personagens (paginado)
-- `GET /api/v1/personagens/{id}` - Buscar personagem por ID
-- `POST /api/v1/personagens` - Criar novo personagem
-- `PUT /api/v1/personagens/{id}` - Atualizar personagem
-- `DELETE /api/v1/personagens/{id}` - Deletar personagem
-- `POST /api/v1/personagens/{id}/jutsu` - Executar jutsu do personagem
+   - `GET /api/v1/personagens` - Listar todos os personagens (paginado)
+   - `GET /api/v1/personagens/{id}` - Buscar personagem por ID
+   - `POST /api/v1/personagens` - Criar novo personagem
+   - `PUT /api/v1/personagens/{id}` - Atualizar personagem
+   - `DELETE /api/v1/personagens/{id}` - Deletar personagem
+   - `POST /api/v1/personagens/{id}/jutsu` - Executar jutsu do personagem
 
 ### Batalhas
-
-- `POST /api/v1/batalhas` - Iniciar nova batalha
-- `POST /api/v1/batalhas/{id}/acoes` - Executar ação na batalha
-- `GET /api/v1/batalhas/{id}` - Consultar estado da batalha
+   
+   - `POST /api/v1/batalhas` - Iniciar nova batalha
+   - `POST /api/v1/batalhas/{id}/acoes` - Executar ação na batalha
+   - `GET /api/v1/batalhas/{id}` - Consultar estado da batalha
 
 ## 📝 Exemplos de Requisições
 
-### Criar Personagem
-
-```json
-{
-    "nome": "Naruto",
-    "idade": 16,
-    "aldeia": "Konoha",
-    "jutsus": [
-        {
-            "nome": "Rasengan",
-            "custoChakra": 20
-        },
-        {
-            "nome": "Kage Bunshin",
-            "custoChakra": 15
-        }
-    ],
-    "chakra": 100,
-    "tipoNinja": "NINJUTSU"
-}
+   ### Criar Personagem
+   
+   ```json
+   {
+       "nome": "Naruto",
+       "idade": 16,
+       "aldeia": "Konoha",
+       "jutsus": [
+           {
+               "nome": "Rasengan",
+               "custoChakra": 20
+           },
+           {
+               "nome": "Kage Bunshin",
+               "custoChakra": 15
+           }
+       ],
+       "chakra": 100,
+       "tipoNinja": "NINJUTSU"
+   }
 ```
 
 ### Executar Jutsu
 
-```bash
-curl -X POST "http://localhost:8080/api/v1/personagens/1/jutsu?desviar=false" \
-     -H "Authorization: Bearer seu_token"
-```
+   ```bash
+   curl -X POST "http://localhost:8080/api/v1/personagens/1/jutsu?desviar=false" \
+        -H "Authorization: Bearer seu_token"
+   ```
 
 ## 🗺 Guia de Batalhas Ninja
 
 ### 📋 Visão Geral
 
-As batalhas são duelos em turnos entre dois ninjas onde cada um pode atacar com jutsus ou tentar desviar de ataques.
+   As batalhas são duelos em turnos entre dois ninjas onde cada um pode atacar com jutsus ou tentar desviar de ataques.
 
 ### 🎯 Passo a Passo para Batalhar
 
-1. **Criar Ninjas** (se ainda não existirem):
-
-```json
-POST /api/v1/personagens
- {
-    "nome": "Naruto",
-    "idade": 16,
-    "aldeia": "Konoha",
-    "jutsus": [
-        {
-            "nome": "Rasengan",
-            "custoChakra": 20
-        },
-        {
-            "nome": "Kage Bunshin",
-            "custoChakra": 15
-        }
-    ],
-    "chakra": 100,
-    "tipoNinja": "NINJUTSU"
-}
-```
-
-2. **Iniciar Batalha**:
-
-```json
-POST /api/v1/batalhas
-{
-    "ninjaDesafianteId": 1,  // ID do Naruto
-    "ninjaDesafiadoId": 2    // ID do Sasuke
-}
-```
-
-Resposta:
-
-```json
-{
-  "id": 1,
-  "mensagem": "Batalha iniciada! Naruto vs Sasuke",
-  "ninjaAtual": 1,
-  "turnoAtual": 1,
-  "finalizada": false,
-  "ninjaDesafiante": {
-    "id": 1,
-    "nome": "Naruto",
-    "chakra": 100,
-    "pontosDeVida": 100,
-    "tipoNinja": "NINJUTSU"
-  },
-  "ninjaDesafiado": {
-    "id": 2,
-    "nome": "Sasuke",
-    "chakra": 100,
-    "pontosDeVida": 100,
-    "tipoNinja": "NINJUTSU"
-  },
-  "vencedor": null,
-  "log": []
-}
-```
-
-3. **Fluxo de Combate**:
-
-   a. **Atacar com Jutsu**:
-
+   1. **Criar Ninjas** (se ainda não existirem):
+   
    ```json
-   POST /api/v1/batalhas/1/acoes
-   {
-       "ninjaId": 1,
-       "tipoAcao": "USAR_JUTSU",
-       "nomeJutsu": "Rasengan"
+   POST /api/v1/personagens
+    {
+       "nome": "Naruto",
+       "idade": 16,
+       "aldeia": "Konoha",
+       "jutsus": [
+           {
+               "nome": "Rasengan",
+               "custoChakra": 20
+           },
+           {
+               "nome": "Kage Bunshin",
+               "custoChakra": 15
+           }
+       ],
+       "chakra": 100,
+       "tipoNinja": "NINJUTSU"
    }
    ```
-
+   
+   2. **Iniciar Batalha**:
+   
+   ```json
+   POST /api/v1/batalhas
+   {
+       "ninjaDesafianteId": 1,  // ID do Naruto
+       "ninjaDesafiadoId": 2    // ID do Sasuke
+   }
+   ```
+   
    Resposta:
-
+   
    ```json
    {
      "id": 1,
-     "mensagem": "Naruto está preparando Rasengan!",
-     "ninjaAtual": 2,
-     "turnoAtual": 2,
+     "mensagem": "Batalha iniciada! Naruto vs Sasuke",
+     "ninjaAtual": 1,
+     "turnoAtual": 1,
      "finalizada": false,
      "ninjaDesafiante": {
        "id": 1,
        "nome": "Naruto",
-       "chakra": 80,
+       "chakra": 100,
        "pontosDeVida": 100,
        "tipoNinja": "NINJUTSU"
      },
@@ -350,197 +309,238 @@ Resposta:
        "tipoNinja": "NINJUTSU"
      },
      "vencedor": null,
-     "log": ["Naruto está preparando Rasengan!"]
+     "log": []
    }
    ```
-
-   b. **Tentar Desviar**:
-
+   
+   3. **Fluxo de Combate**:
+   
+      a. **Atacar com Jutsu**:
+   
+      ```json
+      POST /api/v1/batalhas/1/acoes
+      {
+          "ninjaId": 1,
+          "tipoAcao": "USAR_JUTSU",
+          "nomeJutsu": "Rasengan"
+      }
+      ```
+   
+      Resposta:
+   
+      ```json
+      {
+        "id": 1,
+        "mensagem": "Naruto está preparando Rasengan!",
+        "ninjaAtual": 2,
+        "turnoAtual": 2,
+        "finalizada": false,
+        "ninjaDesafiante": {
+          "id": 1,
+          "nome": "Naruto",
+          "chakra": 80,
+          "pontosDeVida": 100,
+          "tipoNinja": "NINJUTSU"
+        },
+        "ninjaDesafiado": {
+          "id": 2,
+          "nome": "Sasuke",
+          "chakra": 100,
+          "pontosDeVida": 100,
+          "tipoNinja": "NINJUTSU"
+        },
+        "vencedor": null,
+        "log": ["Naruto está preparando Rasengan!"]
+      }
+      ```
+   
+      b. **Tentar Desviar**:
+   
+      ```json
+      POST /api/v1/batalhas/1/acoes
+      {
+          "ninjaId": 2,
+          "tipoAcao": "DESVIAR"
+      }
+      ```
+   
+      Resposta (dois resultados possíveis):
+   
+      ```json
+      {
+        "id": 1,
+        "mensagem": "Sasuke conseguiu desviar do jutsu Rasengan!",
+        "ninjaAtual": 2,
+        "turnoAtual": 3,
+        "finalizada": false,
+        "ninjaDesafiante": {
+          "id": 1,
+          "nome": "Naruto",
+          "chakra": 80,
+          "pontosDeVida": 100,
+          "tipoNinja": "NINJUTSU"
+        },
+        "ninjaDesafiado": {
+          "id": 2,
+          "nome": "Sasuke",
+          "chakra": 100,
+          "pontosDeVida": 100,
+          "tipoNinja": "NINJUTSU"
+        },
+        "vencedor": null,
+        "log": [
+          "Naruto está preparando Rasengan!",
+          "Sasuke conseguiu desviar do jutsu Rasengan!"
+        ]
+      }
+      ```
+   
+      ou
+   
+      ```json
+      {
+        "id": 1,
+        "mensagem": "Sasuke não conseguiu desviar do jutsu Rasengan! Perdeu 40 pontos de vida.",
+        "ninjaAtual": 2,
+        "turnoAtual": 3,
+        "finalizada": false,
+        "ninjaDesafiante": {
+          "id": 1,
+          "nome": "Naruto",
+          "chakra": 80,
+          "pontosDeVida": 100,
+          "tipoNinja": "NINJUTSU"
+        },
+        "ninjaDesafiado": {
+          "id": 2,
+          "nome": "Sasuke",
+          "chakra": 100,
+          "pontosDeVida": 60,
+          "tipoNinja": "NINJUTSU"
+        },
+        "vencedor": null,
+        "log": [
+          "Naruto está preparando Rasengan!",
+          "Sasuke não conseguiu desviar do jutsu Rasengan! Perdeu 40 pontos de vida."
+        ]
+      }
+      ```
+   
+   4. **Consultar Estado da Batalha**:
+   
    ```json
-   POST /api/v1/batalhas/1/acoes
-   {
-       "ninjaId": 2,
-       "tipoAcao": "DESVIAR"
-   }
+   GET /api/v1/batalhas/1
    ```
-
-   Resposta (dois resultados possíveis):
-
-   ```json
-   {
-     "id": 1,
-     "mensagem": "Sasuke conseguiu desviar do jutsu Rasengan!",
-     "ninjaAtual": 2,
-     "turnoAtual": 3,
-     "finalizada": false,
-     "ninjaDesafiante": {
-       "id": 1,
-       "nome": "Naruto",
-       "chakra": 80,
-       "pontosDeVida": 100,
-       "tipoNinja": "NINJUTSU"
-     },
-     "ninjaDesafiado": {
-       "id": 2,
-       "nome": "Sasuke",
-       "chakra": 100,
-       "pontosDeVida": 100,
-       "tipoNinja": "NINJUTSU"
-     },
-     "vencedor": null,
-     "log": [
-       "Naruto está preparando Rasengan!",
-       "Sasuke conseguiu desviar do jutsu Rasengan!"
-     ]
-   }
-   ```
-
-   ou
-
-   ```json
-   {
-     "id": 1,
-     "mensagem": "Sasuke não conseguiu desviar do jutsu Rasengan! Perdeu 40 pontos de vida.",
-     "ninjaAtual": 2,
-     "turnoAtual": 3,
-     "finalizada": false,
-     "ninjaDesafiante": {
-       "id": 1,
-       "nome": "Naruto",
-       "chakra": 80,
-       "pontosDeVida": 100,
-       "tipoNinja": "NINJUTSU"
-     },
-     "ninjaDesafiado": {
-       "id": 2,
-       "nome": "Sasuke",
-       "chakra": 100,
-       "pontosDeVida": 60,
-       "tipoNinja": "NINJUTSU"
-     },
-     "vencedor": null,
-     "log": [
-       "Naruto está preparando Rasengan!",
-       "Sasuke não conseguiu desviar do jutsu Rasengan! Perdeu 40 pontos de vida."
-     ]
-   }
-   ```
-
-4. **Consultar Estado da Batalha**:
-
-```json
-GET /api/v1/batalhas/1
-```
 
 ### 💡 Dicas de Batalha
 
-- **Tipos de Ninja e suas Vantagens**:
-
-  - TAIJUTSU: 40% chance de desvio
-  - NINJUTSU: 30% chance de desvio + dano aumentado
-  - GENJUTSU: 20% chance de desvio + maior precisão
-
-- **Gestão de Chakra**:
-
-  - Cada jutsu tem um custo de chakra
-  - Chakra não regenera durante a batalha
-  - É necessário ter pelo menos 10 de chakra para poder usar jutsus
-
-- **Turnos e Ações**:
-  1. Ninja 1 usa jutsu
-  2. Ninja 2 pode desviar
-  3. Ninja 2 usa jutsu
-  4. Ninja 1 pode desviar
+   - **Tipos de Ninja e suas Vantagens**:
+   
+     - TAIJUTSU: 40% chance de desvio
+     - NINJUTSU: 30% chance de desvio + dano aumentado
+     - GENJUTSU: 20% chance de desvio + maior precisão
+   
+   - **Gestão de Chakra**:
+   
+     - Cada jutsu tem um custo de chakra
+     - Chakra não regenera durante a batalha
+     - É necessário ter pelo menos 10 de chakra para poder usar jutsus
+   
+   - **Turnos e Ações**:
+     1. Ninja 1 usa jutsu
+     2. Ninja 2 pode desviar
+     3. Ninja 2 usa jutsu
+     4. Ninja 1 pode desviar
      E assim por diante...
 
 ### 🎮 Exemplo de Batalha Completa
 
-1. Naruto inicia atacando com Rasengan (custa 20 de chakra)
-2. Sasuke tenta desviar
-3. Se Sasuke não desviar, perde vida baseado no dano do Rasengan
-4. Sasuke contra-ataca com Chidori
-5. Naruto tenta desviar
-6. A batalha continua até alguém perder toda a vida
-
-A batalha termina quando um dos ninjas fica com 0 de vida ou desiste.
-
-## 📸 Screenshots
-
-### Swagger UI
-
-![image](https://github.com/user-attachments/assets/066f59d6-1031-41fc-bcbf-3c1d68235305)
-
-> 🖼️ _Descrição: Screenshot da demonstração da interface_
-
-### Execução de Jutsu
-
-![image](https://github.com/user-attachments/assets/27827329-2d8f-4a5e-8adf-fc974bfbe557)
-
-> 🖼️ _Descrição: Screenshot da execução de um jutsu_
-
-### Listagem de Personagens
-
-![image](https://github.com/user-attachments/assets/671edd71-2708-45c2-a866-aff5ea699be0)
-
-> 🖼️ _Descrição: Screenshot da listagem de personagens_
+   1. Naruto inicia atacando com Rasengan (custa 20 de chakra)
+   2. Sasuke tenta desviar
+   3. Se Sasuke não desviar, perde vida baseado no dano do Rasengan
+   4. Sasuke contra-ataca com Chidori
+   5. Naruto tenta desviar
+   6. A batalha continua até alguém perder toda a vida
+   
+   A batalha termina quando um dos ninjas fica com 0 de vida ou desiste.
+   
+   ## 📸 Screenshots
+   
+   ### Swagger UI
+   
+   ![image](https://github.com/user-attachments/assets/066f59d6-1031-41fc-bcbf-3c1d68235305)
+   
+   > 🖼️ _Descrição: Screenshot da demonstração da interface_
+   
+   ### Execução de Jutsu
+   
+   ![image](https://github.com/user-attachments/assets/27827329-2d8f-4a5e-8adf-fc974bfbe557)
+   
+   > 🖼️ _Descrição: Screenshot da execução de um jutsu_
+   
+   ### Listagem de Personagens
+   
+   ![image](https://github.com/user-attachments/assets/671edd71-2708-45c2-a866-aff5ea699be0)
+   
+   > 🖼️ _Descrição: Screenshot da listagem de personagens_
 
 ## 🧪 Testes
 
-Execute os testes usando:
-
-```bash
-mvn test
-```
-
-O projeto inclui:
-
-- Testes unitários
-- Testes de integração
-- Testes com mock
-- Banco de dados H2 em memória para testes
+   Execute os testes usando:
+   
+   ```bash
+   mvn test
+   ```
+   
+   O projeto inclui:
+   
+   - Testes unitários
+   - Testes de integração
+   - Testes com mock
+   - Banco de dados H2 em memória para testes
 
 ## 🏛 Arquitetura
 
-O projeto segue a Arquitetura Hexagonal (Ports & Adapters) com:
-
-- Design orientado a domínio
-- Clara separação de responsabilidades
-- Portas de entrada/saída
-- Padrão de casos de uso
-- Princípios SOLID
+   O projeto segue a Arquitetura Hexagonal (Ports & Adapters) com:
+   
+   - Design orientado a domínio
+   - Clara separação de responsabilidades
+   - Portas de entrada/saída
+   - Padrão de casos de uso
+   - Princípios SOLID
 
 ## 📦 Estrutura do Projeto
 
-```
-src
-├── main
-│   ├── java
-│   │   └── com.db.desafio_naruto
-│   │       ├── application
-│   │       │   ├── port
-│   │       │   │   ├── in
-│   │       │   │   └── out
-│   │       │   └── service
-│   │       ├── domain
-│   │       │   └── model
-│   │       └── infrastructure
-│   │           ├── adapter
-│   │           │   ├── in
-│   │           │   └── out
-│   │           └── config
-│   └── resources
-└── test
-    └── java
-        └── com.db.desafio_naruto
-```
+   ```
+   src
+   ├── main
+   │   ├── java
+   │   │   └── com.db.desafio_naruto
+   │   │       ├── application
+   │   │       │   ├── port
+   │   │       │   │   ├── in
+   │   │       │   │   └── out
+   │   │       │   └── service
+   │   │       ├── domain
+   │   │       │   └── model
+   │   │       └── infrastructure
+   │   │           ├── adapter
+   │   │           │   ├── in
+   │   │           │   └── out
+   │   │           └── config
+   │   └── resources
+   └── test
+       └── java
+           └── com.db.desafio_naruto
+   ```
 
 ## 🤝 Contribuindo
 
-1. Faça um Fork do projeto
-2. Crie sua Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a Branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+   1. Faça um Fork do projeto
+   2. Crie sua Feature Branch (`git checkout -b feature/AmazingFeature`)
+   3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+   4. Push para a Branch (`git push origin feature/AmazingFeature`)
+   5. Abra um Pull Request
 
 ## 👥 Autores
 
