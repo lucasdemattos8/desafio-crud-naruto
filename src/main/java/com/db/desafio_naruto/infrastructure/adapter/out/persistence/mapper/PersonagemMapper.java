@@ -8,10 +8,12 @@ import org.springframework.stereotype.Component;
 
 import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemBatalhaDTO;
 import com.db.desafio_naruto.application.port.in.dto.personagem.PersonagemDTO;
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeGenjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeNinjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeTaijutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.JutsuEntity;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.PersonagemEntity;
 
 @Component
@@ -23,7 +25,6 @@ public class PersonagemMapper {
         entity.setNome(personagem.getNome());
         entity.setIdade(personagem.getIdade());
         entity.setAldeia(personagem.getAldeia());
-        entity.setJutsus(personagem.getJutsus());
         entity.setChakra(personagem.getChakra());
         entity.setTipoNinja(personagem.getTipoNinja());
         return entity;
@@ -47,7 +48,13 @@ public class PersonagemMapper {
         personagem.setNome(entity.getNome());
         personagem.setIdade(entity.getIdade());
         personagem.setAldeia(entity.getAldeia());
-        personagem.setJutsus(entity.getJutsus());
+        personagem.setJutsus(entity.getJutsus().stream()
+        .map(jutsuEntity -> new Jutsu(
+            jutsuEntity.getId(), 
+            jutsuEntity.getNome(), 
+            jutsuEntity.getCustoChakra()
+        ))
+        .collect(Collectors.toList()));
         personagem.setChakra(entity.getChakra());
         personagem.setTipoNinja(entity.getTipoNinja());
 
@@ -60,7 +67,9 @@ public class PersonagemMapper {
             personagem.getNome(),
             personagem.getIdade(),
             personagem.getAldeia(),
-            personagem.getJutsus(),
+            personagem.getJutsus().stream()
+                .map(Jutsu::getNome)
+                .collect(Collectors.toList()),
             personagem.getChakra(),
             personagem.getTipoNinja()
         );
@@ -70,7 +79,9 @@ public class PersonagemMapper {
         return new PersonagemBatalhaDTO(
             personagem.getId(),
             personagem.getNome(),
-            personagem.getJutsus(),
+            personagem.getJutsus().stream()
+                .map(Jutsu::getNome)
+                .collect(Collectors.toList()),
             0,
             personagem.getChakra(),
             personagem.getTipoNinja()
