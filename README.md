@@ -145,7 +145,7 @@ Use as credenciais definidas nas variáveis de ambiente:
 Depois de logado:
 
 1. Clique com o botão direito em "**Servers**" > "**Register**" > "**Server...**"
-   
+
 ![image](https://github.com/user-attachments/assets/c8594cd7-0872-47e1-b8a1-11524e86dbfa)
 
 ---
@@ -164,11 +164,11 @@ Depois de logado:
 
 Preencha com as seguintes informações:
 
-- **Host name/address:** `postgresdb`  
-  > *(Este é o nome do serviço do Postgres no docker-compose, que funciona como hostname dentro da rede Docker)*
+- **Host name/address:** `postgresdb`
+  > _(Este é o nome do serviço do Postgres no docker-compose, que funciona como hostname dentro da rede Docker)_
 - **Port:** `5432`
 - **Maintenance database:** `${DB_NAME}`  
-  *(Ou `postgres` se estiver em dúvida)*
+  _(Ou `postgres` se estiver em dúvida)_
 - **Username:** `${DB_USERNAME}`
 - **Password:** `${DB_PASSWORD}`
 - ✅ Marque a opção “Save Password”
@@ -207,6 +207,12 @@ Agora você pode explorar as bases de dados, rodar queries e gerenciar tudo dire
 - `DELETE /api/v1/personagens/{id}` - Deletar personagem
 - `POST /api/v1/personagens/{id}/jutsu` - Executar jutsu do personagem
 
+### Batalhas
+
+- `POST /api/v1/batalhas` - Iniciar nova batalha
+- `POST /api/v1/batalhas/{id}/acoes` - Executar ação na batalha
+- `GET /api/v1/batalhas/{id}` - Consultar estado da batalha
+
 ## 📝 Exemplos de Requisições
 
 ### Criar Personagem
@@ -228,6 +234,106 @@ Agora você pode explorar as bases de dados, rodar queries e gerenciar tudo dire
 curl -X POST "http://localhost:8080/api/v1/personagens/1/jutsu?desviar=false" \
      -H "Authorization: Bearer seu_token"
 ```
+
+## ⚔️ Sistema de Batalhas Ninja
+
+O sistema de batalhas implementa duelos entre ninjas com mecânicas baseadas em turnos.
+
+### 🎯 Como Funciona
+
+1. **Início da Batalha**
+
+   - Dois ninjas são selecionados para o combate
+   - O desafiante sempre começa
+   - Cada ninja começa com 100 pontos de vida e seu chakra atual
+
+2. **Ciclo de Turnos**
+
+   - **Fase de Ação**: O ninja atual escolhe entre:
+     - Usar um jutsu (ataque)
+     - Tentar desviar (defesa)
+   - **Fase de Resolução**:
+     - Ataques têm chance de acerto baseada no tipo do ninja
+     - Desvios têm chance de sucesso variável
+     - Dano é calculado com base no jutsu + modificador aleatório
+
+3. **Condições de Vitória**
+   - Batalha termina quando um ninja perde toda a vida
+   - Ninja sem chakra não pode usar jutsus
+
+### 🔄 Endpoints de Batalha
+
+- `POST /api/v1/batalhas` - Iniciar nova batalha
+- `POST /api/v1/batalhas/{id}/acoes` - Executar ação na batalha
+- `GET /api/v1/batalhas/{id}` - Consultar estado da batalha
+
+### 📝 Exemplos de Requisições
+
+**Iniciar Batalha**
+
+```json
+{
+  "ninjaDesafianteId": 1,
+  "ninjaDesafiadoId": 2
+}
+```
+
+**Executar Ação**
+
+```json
+{
+  "ninjaId": 1,
+  "tipoAcao": "USAR_JUTSU",
+  "nomeJutsu": "Rasengan"
+}
+```
+
+### 🎮 Fluxo de Batalha
+
+1. **Turno de Ataque**
+
+```json
+// Resposta após usar jutsu
+{
+  "id": 1,
+  "mensagem": "Naruto está preparando Rasengan!",
+  "ninjaAtual": 2,
+  "turnoAtual": 2,
+  "finalizada": false
+}
+```
+
+2. **Turno de Defesa**
+
+```json
+// Resposta após tentativa de desvio
+{
+  "id": 1,
+  "mensagem": "Sasuke não conseguiu desviar do Rasengan! (-45 de vida)",
+  "ninjaAtual": 1,
+  "turnoAtual": 3,
+  "finalizada": false
+}
+```
+
+### ⚡ Características Especiais
+
+- **Tipos de Ninja afetam batalha:**
+
+  - NINJUTSU: Maior dano em jutsus
+  - TAIJUTSU: Maior chance de desvio
+  - GENJUTSU: Maior chance de acerto
+
+- **Sistema de Chakra:**
+
+  - Cada jutsu consome chakra
+  - Chakra não regenera durante batalha
+  - Gestão estratégica é necessária
+
+- **Aleatoriedade Controlada:**
+  - Dano tem componente base + variação
+  - Chance de desvio varia por tipo
+  - Mantém batalhas dinâmicas
 
 ## 📸 Screenshots
 
