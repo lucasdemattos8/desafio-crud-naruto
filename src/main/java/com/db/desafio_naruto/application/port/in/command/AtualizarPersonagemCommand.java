@@ -1,5 +1,6 @@
 package com.db.desafio_naruto.application.port.in.command;
 
+import com.db.desafio_naruto.domain.model.Jutsu;
 import com.db.desafio_naruto.domain.model.enums.TipoNinja;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class AtualizarPersonagemCommand {
     private String nome;
     private int idade;
     private String aldeia;
-    private List<String> jutsus;
+    private List<Jutsu> jutsus; 
     private int chakra;
     private TipoNinja tipoNinja;
 
@@ -17,7 +18,7 @@ public class AtualizarPersonagemCommand {
     }
 
     public AtualizarPersonagemCommand(Long id, String nome, int idade, String aldeia,
-        List<String> jutsus, int chakra, TipoNinja tipoNinja) {
+        List<Jutsu> jutsus, int chakra, TipoNinja tipoNinja) {
         this.id = id;
         this.nome = nome;
         this.idade = idade;
@@ -60,11 +61,11 @@ public class AtualizarPersonagemCommand {
         this.aldeia = aldeia;
     }
 
-    public List<String> getJutsus() {
+    public List<Jutsu> getJutsus() {
         return jutsus;
     }
 
-    public void setJutsus(List<String> jutsus) {
+    public void setJutsus(List<Jutsu> jutsus) {
         this.jutsus = jutsus;
     }
 
