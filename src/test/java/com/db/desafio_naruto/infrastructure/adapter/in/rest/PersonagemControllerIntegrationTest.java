@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.db.desafio_naruto.infrastructure.adapter.out.persistence.repository.BatalhaJpaRepository;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.repository.PersonagemJpaRepository;
 import com.jayway.jsonpath.JsonPath;
 
@@ -30,6 +31,9 @@ public class PersonagemControllerIntegrationTest {
 
     @Autowired
     private PersonagemJpaRepository personagemJpaRepository;
+    
+    @Autowired 
+    private BatalhaJpaRepository batalhaJpaRepository;
 
     private String token;
     
@@ -42,6 +46,7 @@ public class PersonagemControllerIntegrationTest {
             .andReturn();
             
         token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+        batalhaJpaRepository.deleteAll();
         personagemJpaRepository.deleteAll();
         
         narutoId = criarPersonagemEObterID(criarNarutoJson());
