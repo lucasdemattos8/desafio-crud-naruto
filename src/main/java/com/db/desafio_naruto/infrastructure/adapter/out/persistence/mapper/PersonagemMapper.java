@@ -13,11 +13,16 @@ import com.db.desafio_naruto.domain.model.NinjaDeGenjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeNinjutsu;
 import com.db.desafio_naruto.domain.model.NinjaDeTaijutsu;
 import com.db.desafio_naruto.domain.model.Personagem;
-import com.db.desafio_naruto.infrastructure.adapter.out.persistence.JutsuEntity;
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.PersonagemEntity;
 
 @Component
 public class PersonagemMapper {
+
+    private JutsuMapper jutsuMapper;
+
+    public PersonagemMapper(JutsuMapper jutsuMapper) {
+        this.jutsuMapper = jutsuMapper;
+    }
 
     public PersonagemEntity toEntity(Personagem personagem) {
         PersonagemEntity entity = new PersonagemEntity();
@@ -25,6 +30,9 @@ public class PersonagemMapper {
         entity.setNome(personagem.getNome());
         entity.setIdade(personagem.getIdade());
         entity.setAldeia(personagem.getAldeia());
+        entity.setJutsus(personagem.getJutsus().stream()
+            .map(jutsuMapper::toEntity)
+            .collect(Collectors.toList()));
         entity.setChakra(personagem.getChakra());
         entity.setTipoNinja(personagem.getTipoNinja());
         return entity;
@@ -76,6 +84,7 @@ public class PersonagemMapper {
     }
 
     public PersonagemBatalhaDTO toBatalhaEstadoDto(Personagem personagem) {
+        System.out.println(personagem.getJutsus().size());
         return new PersonagemBatalhaDTO(
             personagem.getId(),
             personagem.getNome(),
