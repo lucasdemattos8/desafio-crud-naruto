@@ -14,11 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
 import com.db.desafio_naruto.infrastructure.adapter.out.persistence.repository.PersonagemJpaRepository;
 import com.jayway.jsonpath.JsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 
 @SpringBootTest
@@ -53,13 +51,11 @@ public class PersonagemControllerIntegrationTest {
 
     @Test
     void deveListarPersonagensComSucesso() throws Exception {
-        @SuppressWarnings("unused")
-        ResultActions teste = mockMvc.perform(get("/api/v1/personagens")
+        mockMvc.perform(get("/api/v1/personagens")
                 .header("Authorization", "Bearer " + token)
                 .param("page", "0")
                 .param("size", "10")
                 .param("sort", "id"))
-            .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content", hasSize(3)))
             .andExpect(jsonPath("$.content[0].nome", is("Naruto Uzumaki")))
